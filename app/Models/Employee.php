@@ -95,6 +95,10 @@ class Employee extends Model
 	public function employeeLeaveTypeDetail(){
 		return $this->hasOne(EmployeeLeaveTypeDetail::class);
 	}
+	public function jobQuestionAnswers()
+	{
+		return $this->hasMany(JobQuestionAnswer::class, 'employee_id');
+	}
 
 
 
