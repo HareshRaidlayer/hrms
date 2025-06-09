@@ -44,7 +44,7 @@
                     <p class="card-text">{{$job_post->Company->company_name}}</p>
                     @endif
                     <h6 class="card-subtitle mt-2 text-muted">{{trans('file.Experience')}}</h6>
-                    <p class="card-text">{{$job_post->jobExperience->title}}</p>
+                    <p class="card-text">{{$job_post->jobExperience->title ?? ''}}</p>
                     <h6 class="card-subtitle mt-2 text-muted">{{trans('file.Vacancy')}}</h6>
                     <p class="card-text">{{$job_post->no_of_vacancy}}</p>
                     <h6 class="card-subtitle mt-2 text-muted">{{__('Apply Before')}}</h6>

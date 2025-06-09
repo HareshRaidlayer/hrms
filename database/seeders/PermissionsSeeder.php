@@ -1504,6 +1504,21 @@ class PermissionsSeeder extends Seeder
 				'guard_name' => 'web',
 				'name' => 'report-pension'
 			),
+			array(
+				'id' => 298,
+				'guard_name' => 'web',
+				'name' => 'job_interview_question'
+			),
+			array(
+				'id' => 299,
+				'guard_name' => 'web',
+				'name' => 'store-job_interview_question'
+			),
+			array(
+				'id' => 300,
+				'guard_name' => 'web',
+				'name' => 'delete-job_interview_question'
+			),
 		);
 		DB::table('permissions')->insert($permissions);
     }

@@ -131,6 +131,7 @@ use App\Http\Controllers\Addon\SaasController;
 use App\Http\Controllers\Variables\DeductionTypeController;
 use App\Http\Controllers\Variables\DepositCategoryController;
 use App\Http\Controllers\Variables\LoanTypeController;
+use App\Http\Controllers\JobQuestionController;
 use Illuminate\Support\Facades\File;
 
 
@@ -609,6 +610,16 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
 
         Route::get('cms', [CmsController::class, 'index'])->name('cms.index');
         Route::post('cms', [CmsController::class, 'store'])->name('cms.store');
+
+        // job Questions
+        Route::get('job-questions', [JobQuestionController::class, 'index'])->name('job_questions.index');
+        Route::post('job-questions/add', [JobQuestionController::class, 'store'])->name('job_questions.store');
+        
+        Route::get('job-questions/{id}/edit', [JobQuestionController::class, 'edit'])->name('job_questions.edit');
+        Route::post('job-questions/update', [JobQuestionController::class, 'update'])->name('job_questions.update');
+        Route::get('job-questions/{id}/delete', [JobQuestionController::class, 'destroy'])->name('job_questions.destroy');
+        Route::post('questions/delete/selected', [JobQuestionController::class, 'delete_by_selection'])->name('mass_delete_job_questions');
+
     });
 
     Route::prefix('training')->group(function () {

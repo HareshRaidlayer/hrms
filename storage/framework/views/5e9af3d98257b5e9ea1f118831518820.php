@@ -368,6 +368,11 @@
                                             href="<?php echo e(route('job_interviews.index')); ?>"><?php echo e(__('Job Interview')); ?></a>
                                 </li>
                             <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('job_interview_question')): ?>
+                                <li id="job_interview_question"><a
+                                            href="<?php echo e(route('job_questions.index')); ?>"><?php echo e(__('Job Question ')); ?></a>
+                                </li>
+                            <?php endif; ?>
                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-cms')): ?>
                                 <li id="cms"><a
                                             href="<?php echo e(route('cms.index')); ?>"><?php echo e(__('CMS')); ?></a>
