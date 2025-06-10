@@ -128,6 +128,7 @@
 
 <section id="content" class="page animate-bottom d-none">
     @yield('content')
+    @yield('page_style')
     @include('layout.main_partials.footer')
 </section>
 
