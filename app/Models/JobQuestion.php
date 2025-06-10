@@ -9,7 +9,7 @@ class JobQuestion extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['question', 'question_type', 'options', 'status', 'created_by'];
+    protected $fillable = ['question', 'question_type','job_id', 'options', 'status', 'created_by'];
 
     protected $casts = [
         'options' => 'array',
