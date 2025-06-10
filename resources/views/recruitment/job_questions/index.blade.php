@@ -7,7 +7,6 @@
 
         <div class="container-fluid"><span id="general_result"></span></div>
 
-
         <div class="container-fluid mb-3">
             @can('store-job_interview_question')
                 <button type="button" class="btn btn-info" name="create_record" id="create_record"><i
@@ -28,6 +27,7 @@
                     <th>Question</th>
                     <th>Question_type</th>
                     <th>Options</th>
+                    <th>Job post</th>
                     <th>Status</th>
                     <th class="not-exported">{{trans('file.action')}}</th>
                 </tr>
@@ -95,6 +95,21 @@
                                     <button type="button" class="btn btn-sm btn-secondary mt-2" onclick="addOption()">Add Option</button>
                                 </div>
                             </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="job_post_assign">{{__('Assign Job')}}</label>
+                                    <select name="job_id" id="job_post_assign" required
+                                            class="form-control selectpicker"
+                                            data-live-search="true" data-live-search-style="contains"
+                                            title='{{__('Selecting',['key'=>__('Assign Question this Job')])}}...'>
+                                        @foreach($job_posts as $job_post)
+                                            <option value="{{$job_post->id}}">{{$job_post->job_title}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
 
                             <div class="container">
                                 <div class="form-group" align="center">
@@ -145,7 +160,7 @@
 
 <script type="text/javascript">
 
-function addOption(value = '') {
+        function addOption(value = '') {
             var input = `
                 <div class="input-group mb-2 option-input">
                     <input type="text" name="options[]" class="form-control" value="${value}" required>
@@ -218,6 +233,10 @@ function addOption(value = '') {
                     {
                         data: 'options',
                         name: 'options',
+                    },
+                    {
+                        data: 'job_title',
+                        name: 'job_title',
                     },
                     {
                         data: 'status',
@@ -406,6 +425,8 @@ function addOption(value = '') {
                             html = '<div class="alert alert-success">' + data.success + '</div>';
                             $('#sample_form')[0].reset();
                             $('select').selectpicker('refresh');
+                            $('#question').html('');
+                            
                             $('#job_question-table').DataTable().ajax.reload();
                         }
                         $('#form_result').html(html).slideDown(300).delay(5000).slideUp(300);
@@ -439,6 +460,7 @@ function addOption(value = '') {
                             setTimeout(function () {
                                 $('#formModal').modal('hide');
                                 $('select').selectpicker('refresh');
+                                $('#question').html('');
                                 $('#job_question-table').DataTable().ajax.reload();
                                 $('#sample_form')[0].reset();
                             }, 2000);
@@ -464,10 +486,9 @@ function addOption(value = '') {
                 dataType: "json",
                 success: function (html) {
 
-
                     $('#question').html( html.data.question);
                     $('#question_type').selectpicker('val', html.data.question_type);
-                    
+                    $('#job_post_assign').selectpicker('val', html.data.job_id);
                     $('input[name="status"][value="' + (html.data.status ? 1 : 0) + '"]').prop('checked', true);
                     if (html.data.question_type === 'radio' || html.data.question_type === 'checkbox') {
                         $('#options-wrapper').show();

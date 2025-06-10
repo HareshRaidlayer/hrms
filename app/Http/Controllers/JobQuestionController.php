@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\JobPost;
 use App\Models\JobQuestion;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class JobQuestionController extends Controller
@@ -15,15 +17,23 @@ class JobQuestionController extends Controller
 {
     $logged_user = auth()->user();
     $JobQuestion = JobQuestion::get();
+	$job_posts = JobPost::where('status',1)->get();
     if ($logged_user->can('job_interview_question')) {
 
         if (request()->ajax()) {
-            $JobQuestion = JobQuestion::get();
+			$JobQuestion = DB::table('job_questions')
+			->join('job_posts', 'job_questions.job_id', '=', 'job_posts.id')
+			->select(
+				'job_questions.*',
+				'job_posts.job_title' // or any other columns from job_posts
+			)
+			->get();
 
             return datatables()->of($JobQuestion)
                 ->setRowId(fn($row) => $row->id)
 
                 ->addColumn('question', fn($row) => $row->question)
+				->addColumn('job_title', fn($row) => $row->job_title)
 
                 ->addColumn('question_type', fn($row) => ucfirst($row->question_type ?? 'N/A'))
 
@@ -59,7 +69,7 @@ class JobQuestionController extends Controller
                 ->make(true);
         }
 
-        return view('recruitment.job_questions.index',compact('JobQuestion'));
+        return view('recruitment.job_questions.index',compact('JobQuestion','job_posts'));
     }
 
     return abort('403', __('You are not authorized'));
@@ -85,10 +95,11 @@ class JobQuestionController extends Controller
         	
 		if ($logged_user->can('store-job_interview_question'))
 		{
-			$validator = Validator::make($request->only('question', 'question_type'),
+			$validator = Validator::make($request->only('question', 'question_type','job_id'),
 				[
 					'question' => 'required',
-					'question_type' => 'required'
+					'question_type' => 'required',
+					'job_id' => 'required'
 				]
 			);
 
@@ -102,6 +113,7 @@ class JobQuestionController extends Controller
 			$data['question'] = $request->question;
 			$data['question_type'] = $request->question_type;
 			$data['options'] = $request->options;
+			$data['job_id'] = $request->job_id;
 			$data['status'] = $request->status;
 			$data['created_by'] = auth()->user()->getRoleNames()->first();
             		
@@ -129,6 +141,12 @@ class JobQuestionController extends Controller
 		{
 			$data = JobQuestion::findOrFail($id);
 
+			$data = DB::table('job_questions')
+			->join('job_posts', 'job_questions.job_id', '=', 'job_posts.id')
+			->select('job_questions.*', 'job_posts.job_title') // add more fields if needed
+			->where('job_questions.id', $id)
+			->first();
+
 			return response()->json(['data' => $data]);
 		}
     }
@@ -143,10 +161,11 @@ class JobQuestionController extends Controller
 		if ($logged_user->can('store-job_interview_question'))
 		{
             $id = $request->hidden_id;
-			$validator = Validator::make($request->only('question', 'question_type'),
+			$validator = Validator::make($request->only('question', 'question_type','job_id'),
 				[
 					'question' => 'required',
-					'question_type' => 'required'
+					'question_type' => 'required',
+					'job_id' => 'required'
 				]
 			);
 
@@ -160,11 +179,12 @@ class JobQuestionController extends Controller
 			$data['question'] = $request->question;
 			$data['question_type'] = $request->question_type;
 			$data['options'] = $request->options;
+			$data['job_id'] = $request->job_id;
 			$data['status'] = $request->status;
             		
             JobQuestion::find($id)->update($data);
 
-			return response()->json(['success' => __('Data Added successfully.')]);
+			return response()->json(['success' => __('Data Updated successfully.')]);
 		}
 		return response()->json(['success' => __('You are not authorized')]);
     }
