@@ -128,6 +128,7 @@
 
 <section id="content" class="page animate-bottom d-none">
     <?php echo $__env->yieldContent('content'); ?>
+    <?php echo $__env->yieldContent('page_style'); ?>
     <?php echo $__env->make('layout.main_partials.footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 </section>
 

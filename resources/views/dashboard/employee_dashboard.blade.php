@@ -1,79 +1,8 @@
+
 @extends('layout.main')
 @section('page_style')
     <style>
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 30%;
-            width: 2px;
-            background: #e83e8c;
-            transform: translateX(-50%);
-        }
-
-        .timeline-step {
-            display: flex;
-            align-items: flex-start;
-            position: relative;
-            margin-bottom: 2rem;
-        }
-
-        .left,
-        .right {
-            width: 25%;
-        }
-
-        .middle {
-            width: 10%;
-            display: flex;
-            justify-content: center;
-            position: relative;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            background-color: #e83e8c;
-            border-radius: 50%;
-            margin-top: 3px;
-            z-index: 1;
-        }
-
-        .line {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 2px;
-            background: #e83e8c;
-            transform: translateX(-50%);
-            z-index: 0;
-        }
-
-        .step-title {
-            font-weight: 600;
-        }
-
-        .step-sub {
-            font-size: 0.85rem;
-            color: #555;
-        }
-
-        .step-sub.red {
-            color: #d63384;
-            font-weight: bold;
-        }
-
-        .text-right-side {
-            font-size: 0.85rem;
-            color: #333;
-        }
     </style>
 @endsection
 @section('content')
@@ -82,11 +11,9 @@
 
         @include('shared.errors')
 
-
-
         <!-- Content -->
-        <div class="container-fluid">
-            <div class="row">
+        <div class="container-fluid employee-dash">
+            <div class="row flex-column-reverse flex-sm-row">
                 <div class="col-12 col-md-8">
                     <div class="timeline">
 
@@ -113,7 +40,7 @@
 
                         <div class="timeline-step">
                             <div class="left text-right">
-                                <div class="step-title">Interview</div>
+                                <div class="step-title"> <a href="#" id="view-interview-answer">Interview</a> </div>
                             </div>
                             <div class="middle">
                                 <div class="dot"></div>
@@ -321,27 +248,30 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
-                    <div class="col-3 col-md-2 mb-3">
+                    <div class="mb-3 text-center text-sm-left">
                         <img src={{ URL::to('/uploads/profile_photos') }}/{{ $user->profile_photo ?? 'avatar.jpg' }}
                             width='150' class='rounded-circle'>
                     </div>
 
-                    <div class="col-9 col-md-10 mb-3">
+                    <div class="text-center text-sm-left mb-3">
                         <h4 class="font-weight-bold">{{ $employee->full_name }} <span
                                 class="text-muted font-weight-normal">
                                 ({{ $user->username }})</span>
                         </h4>
-                        {{-- <div class="text-muted mb-2">{{ $employee->designation->designation_name ?? '' }},
-                            {{ $employee->department->department_name ?? '' }}</div> --}}
-                        {{-- <p class="text-muted">{{ __('Last Login') }}: {{ $user->last_login_date }}</p> --}}
-                        {{-- <p class="text-muted">{{ __('My Office Shift') }}:
+                        <p class="text-muted mb-1">{{ __('Position') }}:
+                            {{ $employee->designation->designation_name ?? '' }}</p>
+                        <p class="text-muted mb-1">{{ __('Department') }}:
+                            {{ $employee->department->department_name ?? '' }}</p>
+
+                        <p class="text-muted mb-1">{{ __('Last Login') }}: {{ $user->last_login_date }}</p>
+                        <p class="text-muted">{{ __('My Office Shift') }}:
                             @if (!$shift_in)
                                 {{ __('No Shift Today') }}
                             @else
                                 {{ $shift_in }} To {{ $shift_out }}
                             @endif
                             ({{ $shift_name }})
-                        </p> --}}
+                        </p>
                         <a class="btn btn-default btn-sm" id="my_profile" href="{{ route('profile') }}">
                             <i class="dripicons-user"></i> {{ trans('file.Profile') }}
                         </a>
@@ -351,7 +281,8 @@
                                 accept-charset="utf-8">
                                 @csrf
 
-                                <input type="hidden" value="{{ $shift_in }}" name="office_shift_in" id="shift_in">
+                                <input type="hidden" value="{{ $shift_in }}" name="office_shift_in"
+                                    id="shift_in">
                                 <input type="hidden" value="{{ $shift_out }}" name="office_shift_out"
                                     id="shift_out">
                                 <input type="hidden" value="" name="in_out_value" id="in_out">
@@ -862,6 +793,140 @@
             </div>
         </div>
 
+        
+        <div id="interviewAnswers" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 id="exampleModalLabel" class="modal-title">{{ __('Interview') }}</h5>
+                        <button type="button" data-dismiss="modal" id="close" aria-label="Close"
+                            class="close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card-body">
+
+                    <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link py-1 px-3 active" data-toggle="pill" href="#job-details">Job Details</a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="nav-link py-1 px-3" data-toggle="pill" href="#applicants">Applicants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 px-3" data-toggle="pill" href="#for-interview">For Interview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 px-3" data-toggle="pill" href="#manage-interview">Manage Interview</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 px-3" data-toggle="pill" href="#Selected">Selected</a>
+                    </li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                    <div class="tab-pane container active" id="job-details">job-details</div>
+                    <div class="tab-pane container fade" id="applicants">
+                        <div class="table-responsive mt-3">
+                            <table id="applicantsTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Contact</th>
+                                        <th>Schedule</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($interviews as $interview)
+                                        @foreach ($interview->candidates as $candidate)
+                                            <tr>
+                                                <td>{{ $candidate->full_name ?? 'N/A' }}</td>
+                                                <td>{{ $candidate->phone ?? 'N/A' }}</td>
+                                                <td>{{ $interview->interview_date ?? '' }}, {{ $interview->interview_time ?? '' }}</td>
+                                                <td>{{ $candidate->status ?? '-' }}</td>
+                                                <td>
+                                                    <!-- Example action buttons -->
+                                                    <a href="#" class="btn btn-sm btn-info">View</a>
+                                                    <a href="#" class="btn btn-sm btn-warning">Edit</a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane container fade" id="for-interview">
+                        <label for="candidateSelect">Agent Name:</label>
+                        <select class="form-control candidate-select" id="candidateSelect">
+                            <option value="">-- Select Agent --</option>
+                            @foreach ($interviews as $interview)
+                                @foreach ($interview->candidates as $candidate)
+                                    <option value="{{ $candidate->id }}"
+                                            data-interview-id="{{ $interview->id }}">
+                                        {{ $candidate->full_name }}
+                                    </option>
+                                @endforeach
+                            @endforeach
+                        </select>
+                        {{-- All candidate question blocks (hidden by default) --}}
+                        @foreach ($interviews as $interview)
+                            @foreach ($interview->candidates as $candidate)
+                                <div class="candidate-questions mt-3"
+                                    data-interview-id="{{ $interview->id }}"
+                                    data-candidate-id="{{ $candidate->id }}"
+                                    style="display: none;">
+                                    
+                                    @if ($interview->jobQuestions->count())
+                                        {{-- <form class="answer-form"> --}}
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>Question</th>
+                                                        <th>Answer</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @php $count = 1; @endphp
+                                                    @foreach ($interview->jobQuestions as $question)
+                                                    
+                                                        <tr>
+                                                            <td>{{ $count++ }}</td>
+                                                            <td>{{ $question->question }}</td>
+                                                            <td>
+                                                                <textarea name="answers[{{ $candidate->id }}][{{ $question->id }}]" class="form-control">{{ $question->questionAnswer->answer }}</textarea>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                            <button type="button"
+                                                    class="btn btn-primary save-answers"
+                                                    data-candidate-id="{{ $candidate->id }}"
+                                                    data-interview-id="{{ $interview->id }}" data-job-id={{$interview->job_id}}>
+                                                Save Data
+                                            </button>
+                                        </form>
+                                    @else
+                                        <p>No questions found.</p>
+                                    @endif
+                                </div>
+                            @endforeach
+                        @endforeach
+                    </div>
+                    <div class="tab-pane container fade" id="manage-interview"></div>
+                    <div class="tab-pane container fade" id="Selected">Selected</div>
+                    </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
     </section>
 @endsection
 
@@ -950,6 +1015,10 @@
             $('#ticket_request').on('click', function() {
                 $('#ticketModal').modal('show');
             });
+            $('#view-interview-answer').on('click', function() {
+                $('#interviewAnswers').modal('show');
+            });
+
 
 
             $('#leaveSampleForm').on('submit', function(event) {
@@ -1070,6 +1139,57 @@
                     }
                 })
             });
+
+            
+            $(document).ready(function () {
+                // Toggle candidate questions on select
+                $('#candidateSelect').on('change', function () {
+                    let selectedCandidateId = $(this).val();
+                    let selectedInterviewId = $(this).find('option:selected').data('interview-id');
+
+                    $('.candidate-questions').hide(); // Hide all
+                    $(`.candidate-questions[data-candidate-id="${selectedCandidateId}"][data-interview-id="${selectedInterviewId}"]`).show();
+                });
+
+                // Save answers on button click
+                $('.save-answers').on('click', function () {
+                    let interviewId = $(this).data('interview-id');
+                    let candidateId = $(this).data('candidate-id');
+                    // let jobId = $(this).data('job-id');
+                    
+                    // Collect answers
+                    let answers = {};
+                    $(`.candidate-questions[data-candidate-id="${candidateId}"][data-interview-id="${interviewId}"] textarea`).each(function () {
+                        let name = $(this).attr('name');
+                        let questionId = name.match(/\[(\d+)\]\[(\d+)\]/)[2];
+                        answers[questionId] = $(this).val();
+                    });
+
+                    // Send via AJAX
+                    $.ajax({
+                        url:"{{ route('job_questions.answers.save') }}",
+                        type: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            candidate_id: candidateId,
+                            interview_id: interviewId,
+                            // job_id:jobId,
+                            answers: answers
+                        },
+                        success: function (res) {
+                            $('#view-interview-answer').modal('hide');
+                           $('#candidateSelect').val('');
+                            // Hide all question blocks again
+                            $('.candidate-questions').hide();
+                        },
+                        error: function (err) {
+                            alert('Error saving answers.');
+                            console.error(err.responseText);
+                        }
+                    });
+                });
+            });
+            
 
         })(jQuery);
     </script>

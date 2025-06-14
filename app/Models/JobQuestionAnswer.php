@@ -9,15 +9,11 @@ class JobQuestionAnswer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['employee_id', 'job_id', 'question_id', 'answer'];
+    protected $fillable = ['candidate_id','question_id', 'answer'];
 
     public function question()
     {
         return $this->belongsTo(JobQuestion::class, 'question_id');
     }
 
-    public function employee()
-    {
-        return $this->belongsTo(Employee::class, 'employee_id');
-    }
 }

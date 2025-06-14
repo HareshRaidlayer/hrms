@@ -4086,3 +4086,77 @@ table.dataTable tbody td.dt-checkboxes-cell {
 .appointment-list-item h6 {
     margin-bottom: 0
 }
+.employee-dash .timeline {
+            position: relative;
+            
+        }
+
+        .employee-dash .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: #e83e8c;
+            transform: translateX(-50%);
+        }
+
+        .employee-dash .timeline-step {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .employee-dash .left,
+        .employee-dash .right {
+            width: 25%;
+        }
+
+        .employee-dash .middle {
+            width: 10%;
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .employee-dash .dot {
+            width: 12px;
+            height: 12px;
+            background-color: #e83e8c;
+            border-radius: 50%;
+            margin-top: 3px;
+            z-index: 1;
+        }
+
+        .employee-dash .line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: #e83e8c;
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+
+        .employee-dash .step-title {
+            font-weight: 600;
+        }
+
+        .employee-dash .step-sub {
+            font-size: 0.85rem;
+            color: #555;
+        }
+
+        .employee-dash .step-sub.red {
+            color: #d63384;
+            font-weight: bold;
+        }
+
+        .employee-dash .text-right-side {
+            font-size: 0.85rem;
+            color: #333;
+        }

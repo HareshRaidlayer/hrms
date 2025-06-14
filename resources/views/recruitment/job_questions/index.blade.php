@@ -103,8 +103,8 @@
                                             class="form-control selectpicker"
                                             data-live-search="true" data-live-search-style="contains"
                                             title='{{__('Selecting',['key'=>__('Assign Question this Job')])}}...'>
-                                        @foreach($job_posts as $job_post)
-                                            <option value="{{$job_post->id}}">{{$job_post->job_title}}</option>
+                                        @foreach($job_interview as $interview)
+                                            <option value="{{$interview->id}}"><h5 class="mb-0">{{$interview->InterviewJob->job_title}}</h5><p class="mb-0">{{$interview->interview_place}} ({{$interview->interview_date}})</p></option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -488,14 +488,19 @@
 
                     $('#question').html( html.data.question);
                     $('#question_type').selectpicker('val', html.data.question_type);
-                    $('#job_post_assign').selectpicker('val', html.data.job_id);
+                    $('#job_post_assign').selectpicker('val', html.data.interviewId);
                     $('input[name="status"][value="' + (html.data.status ? 1 : 0) + '"]').prop('checked', true);
                     if (html.data.question_type === 'radio' || html.data.question_type === 'checkbox') {
                         $('#options-wrapper').show();
                         $('#option-list').html(''); // clear existing
 
-                        if (Array.isArray(html.data.options)) {
-                            html.data.options.forEach((value, index) => {
+                        let options = [];
+                        if (typeof html.data.options === 'string') {
+                            options = JSON.parse(html.data.options); // Convert string to array
+                        }
+
+                        if (Array.isArray(options)) {
+                            options.forEach((value, index) => {
                                 $('#option-list').append(`
                                     <div class="input-group option-input mb-2">
                                         <input type="text" name="options[]" class="form-control" value="${value}" required>
