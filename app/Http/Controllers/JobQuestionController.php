@@ -225,11 +225,11 @@ class JobQuestionController extends Controller
 		}
 		$logged_user = auth()->user();
 
-		if ($logged_user->can('delete-job_interview_question')) {
+		// if ($logged_user->can('delete-job_interview_question')) {
 			JobQuestion::whereId($id)->delete();
 
 			return response()->json(['success' => __('Data is successfully deleted')]);
-		}
+		// }
 
 		return response()->json(['success' => __('You are not authorized')]);
 	}
@@ -253,29 +253,43 @@ class JobQuestionController extends Controller
 
 		return response()->json(['success' => __('You are not authorized')]);
 	}
+
+	public function manageInterview(){
+
+		$user = auth()->user();
+		
+		$interviews = JobInterview::whereHas('employees', function ($query) use ($user) {
+			$query->where('employee_id', $user->id);
+		})->with('InterviewJob', 'jobQuestions', 'candidates','jobPost')->get();
+		return view('employee.interview.index',compact('interviews'));
+
+	}
+
 	public function saveAnswers(Request $request)
 {
-    $answers = $request->input('answers');
-    $candidateId = $request->input('candidate_id');
+    try {
+        $answers = $request->input('answers');
+        $candidateId = $request->input('candidate_id');
 
-    foreach ($answers as $questionId => $answerText) {
-        \Log::info('Saving Answer', [
-            'candidate_id' => $candidateId,
-            'question_id' => $questionId,
-            'answer' => $answerText
+        foreach ($answers as $questionId => $answerText) {
+            JobQuestionAnswer::updateOrCreate(
+                [
+                    'candidate_id' => $candidateId,
+                    'question_id' => $questionId,
+                ],
+                [
+                    'answer' => $answerText,
+                ]
+            );
+        }
+		return response()->json(['success' => __('Answers saved successfully')]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error saving answers: ' . $e->getMessage(), [
+            'exception' => $e
         ]);
 
-        JobQuestionAnswer::updateOrCreate(
-            [
-                'candidate_id' => $candidateId,
-                'question_id' => $questionId,
-            ],
-            [
-                'answer' => $answerText,
-            ]
-        );
+		return response()->json(['error' => __('Failed to save answers')]);
     }
-
-    return response()->json(['message' => 'Answers saved successfully']);
 }
 }

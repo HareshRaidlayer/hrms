@@ -31,6 +31,10 @@ class JobInterview extends Model
 	{
 		return $this->hasMany(JobQuestion::class, 'interview_id');
 	}
+	public function jobPost()
+	{
+		return $this->belongsTo(JobPost::class, 'job_id');
+	}
 
 	public function setInterviewDateAttribute($value)
 	{

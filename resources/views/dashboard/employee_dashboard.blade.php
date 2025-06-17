@@ -40,7 +40,7 @@
 
                         <div class="timeline-step">
                             <div class="left text-right">
-                                <div class="step-title"> <a href="#" id="view-interview-answer">Interview</a> </div>
+                                <div class="step-title"> <a href="{{route('job.manageInterview')}}" >Interview</a> </div>
                             </div>
                             <div class="middle">
                                 <div class="dot"></div>
@@ -794,138 +794,6 @@
         </div>
 
         
-        <div id="interviewAnswers" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 id="exampleModalLabel" class="modal-title">{{ __('Interview') }}</h5>
-                        <button type="button" data-dismiss="modal" id="close" aria-label="Close"
-                            class="close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="card-body">
-
-                    <ul class="nav nav-pills">
-                    <li class="nav-item">
-                        <a class="nav-link py-1 px-3 active" data-toggle="pill" href="#job-details">Job Details</a>
-                    </li>
-                    <li class="nav-item ">
-                        <a class="nav-link py-1 px-3" data-toggle="pill" href="#applicants">Applicants</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link py-1 px-3" data-toggle="pill" href="#for-interview">For Interview</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link py-1 px-3" data-toggle="pill" href="#manage-interview">Manage Interview</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link py-1 px-3" data-toggle="pill" href="#Selected">Selected</a>
-                    </li>
-                    </ul>
-
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                    <div class="tab-pane container active" id="job-details">job-details</div>
-                    <div class="tab-pane container fade" id="applicants">
-                        <div class="table-responsive mt-3">
-                            <table id="applicantsTable" class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Contact</th>
-                                        <th>Schedule</th>
-                                        <th>Status</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($interviews as $interview)
-                                        @foreach ($interview->candidates as $candidate)
-                                            <tr>
-                                                <td>{{ $candidate->full_name ?? 'N/A' }}</td>
-                                                <td>{{ $candidate->phone ?? 'N/A' }}</td>
-                                                <td>{{ $interview->interview_date ?? '' }}, {{ $interview->interview_time ?? '' }}</td>
-                                                <td>{{ $candidate->status ?? '-' }}</td>
-                                                <td>
-                                                    <!-- Example action buttons -->
-                                                    <a href="#" class="btn btn-sm btn-info">View</a>
-                                                    <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="tab-pane container fade" id="for-interview">
-                        <label for="candidateSelect">Agent Name:</label>
-                        <select class="form-control candidate-select" id="candidateSelect">
-                            <option value="">-- Select Agent --</option>
-                            @foreach ($interviews as $interview)
-                                @foreach ($interview->candidates as $candidate)
-                                    <option value="{{ $candidate->id }}"
-                                            data-interview-id="{{ $interview->id }}">
-                                        {{ $candidate->full_name }}
-                                    </option>
-                                @endforeach
-                            @endforeach
-                        </select>
-                        {{-- All candidate question blocks (hidden by default) --}}
-                        @foreach ($interviews as $interview)
-                            @foreach ($interview->candidates as $candidate)
-                                <div class="candidate-questions mt-3"
-                                    data-interview-id="{{ $interview->id }}"
-                                    data-candidate-id="{{ $candidate->id }}"
-                                    style="display: none;">
-                                    
-                                    @if ($interview->jobQuestions->count())
-                                        {{-- <form class="answer-form"> --}}
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>#</th>
-                                                        <th>Question</th>
-                                                        <th>Answer</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @php $count = 1; @endphp
-                                                    @foreach ($interview->jobQuestions as $question)
-                                                    
-                                                        <tr>
-                                                            <td>{{ $count++ }}</td>
-                                                            <td>{{ $question->question }}</td>
-                                                            <td>
-                                                                <textarea name="answers[{{ $candidate->id }}][{{ $question->id }}]" class="form-control">{{ $question->questionAnswer->answer }}</textarea>
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                            <button type="button"
-                                                    class="btn btn-primary save-answers"
-                                                    data-candidate-id="{{ $candidate->id }}"
-                                                    data-interview-id="{{ $interview->id }}" data-job-id={{$interview->job_id}}>
-                                                Save Data
-                                            </button>
-                                        </form>
-                                    @else
-                                        <p>No questions found.</p>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @endforeach
-                    </div>
-                    <div class="tab-pane container fade" id="manage-interview"></div>
-                    <div class="tab-pane container fade" id="Selected">Selected</div>
-                    </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
 
     </section>
 @endsection
@@ -1015,12 +883,7 @@
             $('#ticket_request').on('click', function() {
                 $('#ticketModal').modal('show');
             });
-            $('#view-interview-answer').on('click', function() {
-                $('#interviewAnswers').modal('show');
-            });
-
-
-
+            
             $('#leaveSampleForm').on('submit', function(event) {
                 event.preventDefault();
 
@@ -1139,57 +1002,6 @@
                     }
                 })
             });
-
-            
-            $(document).ready(function () {
-                // Toggle candidate questions on select
-                $('#candidateSelect').on('change', function () {
-                    let selectedCandidateId = $(this).val();
-                    let selectedInterviewId = $(this).find('option:selected').data('interview-id');
-
-                    $('.candidate-questions').hide(); // Hide all
-                    $(`.candidate-questions[data-candidate-id="${selectedCandidateId}"][data-interview-id="${selectedInterviewId}"]`).show();
-                });
-
-                // Save answers on button click
-                $('.save-answers').on('click', function () {
-                    let interviewId = $(this).data('interview-id');
-                    let candidateId = $(this).data('candidate-id');
-                    // let jobId = $(this).data('job-id');
-                    
-                    // Collect answers
-                    let answers = {};
-                    $(`.candidate-questions[data-candidate-id="${candidateId}"][data-interview-id="${interviewId}"] textarea`).each(function () {
-                        let name = $(this).attr('name');
-                        let questionId = name.match(/\[(\d+)\]\[(\d+)\]/)[2];
-                        answers[questionId] = $(this).val();
-                    });
-
-                    // Send via AJAX
-                    $.ajax({
-                        url:"{{ route('job_questions.answers.save') }}",
-                        type: "POST",
-                        data: {
-                            _token: "{{ csrf_token() }}",
-                            candidate_id: candidateId,
-                            interview_id: interviewId,
-                            // job_id:jobId,
-                            answers: answers
-                        },
-                        success: function (res) {
-                            $('#view-interview-answer').modal('hide');
-                           $('#candidateSelect').val('');
-                            // Hide all question blocks again
-                            $('.candidate-questions').hide();
-                        },
-                        error: function (err) {
-                            alert('Error saving answers.');
-                            console.error(err.responseText);
-                        }
-                    });
-                });
-            });
-            
 
         })(jQuery);
     </script>

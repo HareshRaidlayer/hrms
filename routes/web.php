@@ -613,6 +613,7 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
         Route::post('cms', [CmsController::class, 'store'])->name('cms.store');
 
         // job Questions
+        Route::get('manage/interview', [JobQuestionController::class, 'manageInterview'])->name('job.manageInterview');
         Route::get('job-questions', [JobQuestionController::class, 'index'])->name('job_questions.index');
         Route::post('job-questions/add', [JobQuestionController::class, 'store'])->name('job_questions.store');
         

@@ -64,7 +64,8 @@
 
 
                             <div class="form-group col-md-6">
-                                <label for="question_type">Question Type <span class="text-danger">*</span></label>
+                                <input type="hidden" name="question_type" value="text">
+                                {{-- <label for="question_type">Question Type <span class="text-danger">*</span></label>
 
                                 <select name="question_type" id="question_type" class="form-control selectpicker dynamic"
                                             data-live-search="true" data-live-search-style="contains"
@@ -74,7 +75,7 @@
                                             <option value="radio">Radio (Single Choice)</option>
                                             <option value="checkbox">Checkbox (Multiple Choice)</option>
 
-                                    </select>
+                                    </select> --}}
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
