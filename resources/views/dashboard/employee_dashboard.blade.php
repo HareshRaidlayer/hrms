@@ -1,79 +1,8 @@
+
 @extends('layout.main')
 @section('page_style')
     <style>
-        .timeline {
-            position: relative;
-            padding: 2rem 0;
-        }
 
-        .timeline::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 30%;
-            width: 2px;
-            background: #e83e8c;
-            transform: translateX(-50%);
-        }
-
-        .timeline-step {
-            display: flex;
-            align-items: flex-start;
-            position: relative;
-            margin-bottom: 2rem;
-        }
-
-        .left,
-        .right {
-            width: 25%;
-        }
-
-        .middle {
-            width: 10%;
-            display: flex;
-            justify-content: center;
-            position: relative;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            background-color: #e83e8c;
-            border-radius: 50%;
-            margin-top: 3px;
-            z-index: 1;
-        }
-
-        .line {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 2px;
-            background: #e83e8c;
-            transform: translateX(-50%);
-            z-index: 0;
-        }
-
-        .step-title {
-            font-weight: 600;
-        }
-
-        .step-sub {
-            font-size: 0.85rem;
-            color: #555;
-        }
-
-        .step-sub.red {
-            color: #d63384;
-            font-weight: bold;
-        }
-
-        .text-right-side {
-            font-size: 0.85rem;
-            color: #333;
-        }
     </style>
 @endsection
 @section('content')
@@ -82,11 +11,9 @@
 
         @include('shared.errors')
 
-
-
         <!-- Content -->
-        <div class="container-fluid">
-            <div class="row">
+        <div class="container-fluid employee-dash">
+            <div class="row flex-column-reverse flex-sm-row">
                 <div class="col-12 col-md-8">
                     <div class="timeline">
 
@@ -113,7 +40,7 @@
 
                         <div class="timeline-step">
                             <div class="left text-right">
-                                <div class="step-title">Interview</div>
+                                <div class="step-title"> <a href="{{route('job.manageInterview')}}" >Interview</a> </div>
                             </div>
                             <div class="middle">
                                 <div class="dot"></div>
@@ -321,27 +248,30 @@
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
-                    <div class="col-3 col-md-2 mb-3">
+                    <div class="mb-3 text-center text-sm-left">
                         <img src={{ URL::to('/uploads/profile_photos') }}/{{ $user->profile_photo ?? 'avatar.jpg' }}
                             width='150' class='rounded-circle'>
                     </div>
 
-                    <div class="col-9 col-md-10 mb-3">
+                    <div class="text-center text-sm-left mb-3">
                         <h4 class="font-weight-bold">{{ $employee->full_name }} <span
                                 class="text-muted font-weight-normal">
                                 ({{ $user->username }})</span>
                         </h4>
-                        {{-- <div class="text-muted mb-2">{{ $employee->designation->designation_name ?? '' }},
-                            {{ $employee->department->department_name ?? '' }}</div> --}}
-                        {{-- <p class="text-muted">{{ __('Last Login') }}: {{ $user->last_login_date }}</p> --}}
-                        {{-- <p class="text-muted">{{ __('My Office Shift') }}:
+                        <p class="text-muted mb-1">{{ __('Position') }}:
+                            {{ $employee->designation->designation_name ?? '' }}</p>
+                        <p class="text-muted mb-1">{{ __('Department') }}:
+                            {{ $employee->department->department_name ?? '' }}</p>
+
+                        <p class="text-muted mb-1">{{ __('Last Login') }}: {{ $user->last_login_date }}</p>
+                        <p class="text-muted">{{ __('My Office Shift') }}:
                             @if (!$shift_in)
                                 {{ __('No Shift Today') }}
                             @else
                                 {{ $shift_in }} To {{ $shift_out }}
                             @endif
                             ({{ $shift_name }})
-                        </p> --}}
+                        </p>
                         <a class="btn btn-default btn-sm" id="my_profile" href="{{ route('profile') }}">
                             <i class="dripicons-user"></i> {{ trans('file.Profile') }}
                         </a>
@@ -351,7 +281,8 @@
                                 accept-charset="utf-8">
                                 @csrf
 
-                                <input type="hidden" value="{{ $shift_in }}" name="office_shift_in" id="shift_in">
+                                <input type="hidden" value="{{ $shift_in }}" name="office_shift_in"
+                                    id="shift_in">
                                 <input type="hidden" value="{{ $shift_out }}" name="office_shift_out"
                                     id="shift_out">
                                 <input type="hidden" value="" name="in_out_value" id="in_out">
@@ -862,6 +793,8 @@
             </div>
         </div>
 
+        
+
     </section>
 @endsection
 
@@ -950,8 +883,7 @@
             $('#ticket_request').on('click', function() {
                 $('#ticketModal').modal('show');
             });
-
-
+            
             $('#leaveSampleForm').on('submit', function(event) {
                 event.preventDefault();
 

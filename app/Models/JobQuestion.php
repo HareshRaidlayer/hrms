@@ -9,15 +9,23 @@ class JobQuestion extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['question', 'question_type','job_id', 'options', 'status', 'created_by'];
+    protected $fillable = ['question', 'question_type','interview_id', 'options', 'status', 'created_by'];
 
     protected $casts = [
         'options' => 'array',
         'status' => 'boolean'
     ];
 
-    public function assignments()
+    // public function jobQuestions()
+    // {
+    //     return $this->hasMany(JobQuestion::class, 'job_id', 'job_id');
+    // }
+    public function jobInterviw()
     {
-        return $this->hasMany(JobQuestionAssignment::class, 'question_id');
+        return $this->hasMany(JobQuestion::class, 'interview_id');
+    }
+    public function questionAnswer()
+    {
+        return $this->hasOne(JobQuestionAnswer::class, 'question_id');
     }
 }

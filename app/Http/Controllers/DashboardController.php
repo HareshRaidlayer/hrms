@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\Validator;
 use Throwable;
 use ZipArchive;
 use Illuminate\Support\Facades\File;
+use App\Models\JobInterview;
 
 
 class DashboardController extends Controller {
@@ -520,6 +521,10 @@ class DashboardController extends Controller {
 		$shift_out = $employee->officeShift->$current_day_out;
 		$shift_name = $employee->officeShift->shift_name;
 
+		$interviews = JobInterview::whereHas('employees', function ($query) use ($user) {
+			$query->where('employee_id', $user->id);
+		})->with('InterviewJob', 'jobQuestions', 'candidates')->get();
+		
 		$announcements = Announcement::where('start_date', '<=', now()->format('Y-m-d'))
 			->where('end_date', '>=', now()->format('Y-m-d'))->where('is_notify', 1)->select('id', 'title', 'summary')->latest()->take(3)->get();
 
@@ -604,7 +609,7 @@ class DashboardController extends Controller {
             }
         }
 		return view('dashboard.employee_dashboard', compact('user', 'employee', 'employee_attendance',
-			'shift_in', 'shift_out', 'shift_name', 'announcements',
+			'shift_in', 'shift_out', 'shift_name', 'announcements','interviews',
 			'employee_award_count', 'holidays', 'leave_types', 'travel_types',
 			'assigned_projects', 'assigned_projects_count',
 			'assigned_tasks', 'assigned_tasks_count', 'assigned_tickets', 'assigned_tickets_count','ipCheck'));

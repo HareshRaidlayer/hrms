@@ -607,11 +607,13 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
         Route::post('job_interviews/update', [JobInterviewController::class, 'update'])->name('job_interviews.update');
         Route::resource('job_interviews', JobInterviewController::class)->except(['destroy', 'create', 'update']);
         Route::get('job_interviews/{id}/delete', [JobInterviewController::class, 'destroy'])->name('job_interviews.destroy');
+        Route::get('/interview/manage/{id}', [JobInterviewController::class, 'manageInterview'])->name('job_interviews.manage');
 
         Route::get('cms', [CmsController::class, 'index'])->name('cms.index');
         Route::post('cms', [CmsController::class, 'store'])->name('cms.store');
 
         // job Questions
+        Route::get('manage/interview', [JobQuestionController::class, 'manageInterview'])->name('job.manageInterview');
         Route::get('job-questions', [JobQuestionController::class, 'index'])->name('job_questions.index');
         Route::post('job-questions/add', [JobQuestionController::class, 'store'])->name('job_questions.store');
         
@@ -619,6 +621,8 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
         Route::post('job-questions/update', [JobQuestionController::class, 'update'])->name('job_questions.update');
         Route::get('job-questions/{id}/delete', [JobQuestionController::class, 'destroy'])->name('job_questions.destroy');
         Route::post('questions/delete/selected', [JobQuestionController::class, 'delete_by_selection'])->name('mass_delete_job_questions');
+        Route::post('/interview/answers/save', [JobQuestionController::class, 'saveAnswers'])->name('job_questions.answers.save');
+
 
     });
 

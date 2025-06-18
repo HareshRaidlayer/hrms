@@ -32,7 +32,6 @@ class JobPostController extends Controller {
 
 				$job_posts = JobPost::with('Company:id,company_name',
 					'PostJobCategory:id,job_category')->get();
-
 				return datatables()->of($job_posts)
 					->setRowId(function ($row)
 					{

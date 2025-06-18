@@ -31,7 +31,7 @@ class RoleController extends Controller {
 					->addColumn('action', function ($data)
 					{
 						$button = '';
-						if($data->name != 'admin' && $data->name != 'employee' && $data->name != 'client' )
+						if($data->name != 'admin' && $data->name != 'client' )
 						{
 							if (auth()->user()->can('set-permission'))
 							{
