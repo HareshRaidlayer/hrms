@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\JobInterview;
-use App\Models\EmployeeDocument;
 use App\Models\Employee;
 use App\Models\DocumentType;
+use App\Models\JobCandidate;
+use App\Models\JobInterview;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Models\CandidatesDucument;
 use Illuminate\Support\Facades\Validator;
 
 class OnboardingController extends Controller
@@ -66,13 +67,11 @@ class OnboardingController extends Controller
 
         $user = auth()->user();
 
-        $employee = Employee::find($user->id);
+        $employee = JobCandidate::find($id);
         $document_types = DocumentType::get();
-        // print_r($employee);
-        // exit;
 
         if (request()->ajax()) {
-            return datatables()->of(EmployeeDocument::with('DocumentType')->where('employee_id', $employee->id)->get())
+            return datatables()->of(CandidatesDucument::with('DocumentType')->where('candidate_id', $employee->id)->get())
                 ->setRowId(function ($document) {
                     return $document->id;
                 })
@@ -84,7 +83,7 @@ class OnboardingController extends Controller
                 })
                 ->addColumn('title', function ($row) {
                     if ($row->document_file) {
-                        return $row->document_title . '<br><h6><a href="' . route('documents_document.download', $row->id) . '">' . trans('file.File') . '</a></h6>';
+                        return $row->document_title . '<br><h6><a href="' . route('candidate_document.download', $row->id) . '">' . trans('file.File') . '</a></h6>';
                     } else {
                         return $row->document_title;
                     }
@@ -96,13 +95,78 @@ class OnboardingController extends Controller
                     $button .= '<button type="button" name="delete" id="' . $data->id . '" class="document_delete btn btn-danger btn-sm"><i class="dripicons-trash"></i></button>';
 
                     return $button;
-
                 })
                 ->rawColumns(['action', 'title'])
                 ->make(true);
         }
         return view('onboarding.documents.index', compact('employee', 'document_types'));
     }
+
+    public function store(Request $request, $candidate)
+    {
+        $logged_user = auth()->user();
+
+        $validator = Validator::make(
+            $request->only(
+                'document_title',
+                'document_type_id',
+                'expiry_date',
+                'description',
+                'document_file',
+                'is_notify'
+            ),
+            [
+                'document_title' => 'required',
+                'document_type_id' => 'required',
+                'expiry_date' => 'required',
+                'document_file' => 'nullable|file|max:10240|mimes:jpeg,png,jpg,gif,ppt,pptx,doc,docx,pdf',
+            ]
+
+        );
+
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->all()]);
+        }
+
+
+        $data = [];
+
+        $data['document_title'] = $request->document_title;
+        $data['candidate_id'] = $candidate;
+        $data['document_type_id'] = $request->document_type_id;
+        $data['expiry_date'] = $request->expiry_date;
+        $data['description'] = $request->description;
+        $data['is_notify'] = $request->is_notify;
+
+        $file = $request->document_file;
+
+        $file_name = null;
+
+        if (isset($file)) {
+            $file_name = $data['document_title'];
+            if ($file->isValid()) {
+                $file_name = $file_name . '.' . time() . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('document_documents', $file_name);
+                $data['document_file'] = $file_name;
+            }
+        }
+
+        CandidatesDucument::create($data);
+
+
+        return response()->json(['success' => __('Data Added successfully.')]);
+    }
+
+    public function editid($id)
+	{
+		if (request()->ajax())
+		{
+			$data = CandidatesDucument::findOrFail($id);
+
+			return response()->json(['data' => $data]);
+		}
+	}
     public function update(Request $request)
     {
         $id = $request->hidden_id;
@@ -153,14 +217,14 @@ class OnboardingController extends Controller
             }
         }
 
-        EmployeeDocument::find($id)->update($data);
+        CandidatesDucument::find($id)->update($data);
 
         return response()->json(['success' => __('Data is successfully updated')]);
     }
     public function unlink($id)
     {
 
-        $document = EmployeeDocument::findOrFail($id);
+        $document = CandidatesDucument::findOrFail($id);
         $file_path = $document->document_file;
 
         if ($file_path) {
@@ -175,9 +239,27 @@ class OnboardingController extends Controller
         $logged_user = auth()->user();
 
         $this->unlink($id); // Custom method to delete file if needed
-        EmployeeDocument::destroy($id); // Or use ::whereId($id)->delete();
+        CandidatesDucument::destroy($id); // Or use ::whereId($id)->delete();
 
         return response()->json(['success' => __('Data is successfully deleted')]);
     }
 
+    public function download($id)
+	{
+		$file = CandidatesDucument::findOrFail($id);
+
+		$file_path = $file->document_file;
+
+		$download_path = public_path("uploads/document_documents/" . $file_path);
+
+		if (file_exists($download_path))
+		{
+			$response = response()->download($download_path);
+
+			return $response;
+		} else
+		{
+			return abort('404', __('File not Found'));
+		}
+	}
 }

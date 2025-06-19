@@ -76,16 +76,7 @@ class EmployeeDocumentController extends Controller {
 					'expiry_date' => 'required',
 					'document_file' => 'nullable|file|max:10240|mimes:jpeg,png,jpg,gif,ppt,pptx,doc,docx,pdf',
 				]
-//				,
-//				[
-//					'document_title.required' => 'Document Title can not be empty',
-//					'expiry_date.required' => 'Expiry Date can not be empty',
-//					'document_type_id.required' => 'Please select document Type',
-//					'notification_email.email' => 'please enter a valid email',
-//					'document_file.file'=>'File is not valid',
-//					'document_file.max'=>'File must be less than 10 mb',
-//					'document_file.mimes'=>'File must be of (jpeg,png,jpg,gif,ppt,pptx,doc,docx,pdf) type',
-//				]
+
 			);
 
 
@@ -153,16 +144,7 @@ class EmployeeDocumentController extends Controller {
 					'expiry_date' => 'required',
 					'document_file' => 'nullable|file|max:10240|mimes:jpeg,png,jpg,gif,ppt,pptx,doc,docx,pdf',
 				]
-//				,
-//				[
-//					'document_title.required' => 'Document Title can not be empty',
-//					'expiry_date.required' => 'Expiry Date can not be empty',
-//					'document_type_id.required' => 'Please select document Type',
-//					'notification_email.email' => 'please enter a valid email',
-//					'document_file.file'=>'File is not valid',
-//					'document_file.max'=>'File must be less than 10 mb',
-//					'document_file.mimes'=>'File must be of (jpeg,png,jpg,gif,ppt,pptx,doc,docx,pdf) type',
-//				]
+
 			);
 
 

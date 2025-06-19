@@ -256,12 +256,15 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
         Route::get('/statutory-deduction/details', [EmployeeController::class, 'statutoryDeduction'])->name('employees.statutoryDeduction');
 
         Route::prefix('onboarding')->group(function () {
-                // Route::get('onboarding', [JobQuestionController::class, 'onboarding'])->name('onboarding');
-                Route::get('/index', [OnboardingController::class, 'index'])->name('onboarding.index');
-                Route::get('/employee/document/{id}', [OnboardingController::class, 'dashboard'])->name('onboarding.dashboard');
-                Route::post('/employee/documents/update', [OnboardingController::class, 'update'])->name('onboarding.documents.update');
-                Route::delete('/employee/documents/delete/{id}', [OnboardingController::class, 'destroy'])->name('onboarding.documents.destroy');
-            });
+        // Route::get('onboarding', [JobQuestionController::class, 'onboarding'])->name('onboarding');
+        Route::get('candidate/document/download/{id}', [OnboardingController::class, 'download'])->name('candidate_document.download');
+        Route::post('documents/{candidate}/store', [OnboardingController::class, 'store'])->name('onboarding.documents.store');
+        Route::get('/candidate-document/edit/{id}', [OnboardingController::class, 'editid'])->name('onboarding.documents.edit');
+        Route::get('/index', [OnboardingController::class, 'index'])->name('onboarding.index');
+        Route::get('/candidate/document/{id}', [OnboardingController::class, 'dashboard'])->name('onboarding.dashboard');
+        Route::post('/candidate/documents/update', [OnboardingController::class, 'update'])->name('onboarding.documents.update');
+        Route::delete('/candidate/document/delete/{id}', [OnboardingController::class, 'destroy'])->name('onboarding.documents.destroy');
+    });
 
         Route::prefix('immigrations')->group(function () {
             Route::get('/', [EmployeeImmigrationController::class, 'index'])->name('immigrations.index');
@@ -418,6 +421,8 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
         Route::get('employee_leave_type_detail/{employee}', [EmployeeLeaveTypeDetailController::class,'index'])->name('employee_leave_type_detail.index');
 
     });
+
+    
 
     Route::get('calendar/hr', [CalendarableController::class, 'index'])->name('calendar.index');
     Route::get('calendar/hr/load', [CalendarableController::class, 'load'])->name('calendar.load');
