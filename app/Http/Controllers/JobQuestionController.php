@@ -82,7 +82,7 @@ class JobQuestionController extends Controller
 
 		return abort('403', __('You are not authorized'));
 	}
-
+    
 	public function create()
 	{
 		return view('recruitment.job_questions.create');
@@ -97,9 +97,9 @@ class JobQuestionController extends Controller
 			$questions = $request->input('question');
 			// dd($questions = $request->input('question'));
 			$interviewId = $request->input('interview_id'); // Get the interview_id
-			
+
 			foreach ($questions as $q) {
-				if (isset($q['id']) && $q['id'] != null) { 
+				if (isset($q['id']) && $q['id'] != null) {
 					// Update existing question
 					JobQuestion::where('id', $q['id'])->update([
 						'interview_id' => $interviewId,
@@ -121,7 +121,7 @@ class JobQuestionController extends Controller
 					]);
 				}
 			}
-			
+
 			return response()->json(['success' => __('Data Added successfully.')]);
 		}
 
@@ -257,7 +257,7 @@ class JobQuestionController extends Controller
 	public function manageInterview(){
 
 		$user = auth()->user();
-		
+
 		$interviews = JobInterview::whereHas('employees', function ($query) use ($user) {
 			$query->where('employee_id', $user->id);
 		})->with('InterviewJob', 'jobQuestions', 'candidates','jobPost')->get();

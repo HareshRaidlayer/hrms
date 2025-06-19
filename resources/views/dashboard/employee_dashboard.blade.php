@@ -72,7 +72,7 @@
 
                         <div class="timeline-step">
                             <div class="left text-right">
-                                <div class="step-title">Onboarding</div>
+                                <div class="step-title"><a href="{{route('onboarding.index')}}" >Onboarding</a></div>
                             </div>
                             <div class="middle">
                                 <div class="dot"></div>
@@ -793,7 +793,7 @@
             </div>
         </div>
 
-        
+
 
     </section>
 @endsection
@@ -883,7 +883,7 @@
             $('#ticket_request').on('click', function() {
                 $('#ticketModal').modal('show');
             });
-            
+
             $('#leaveSampleForm').on('submit', function(event) {
                 event.preventDefault();
 
