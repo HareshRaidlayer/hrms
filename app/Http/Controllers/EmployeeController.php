@@ -2,31 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\company;
-use App\Models\DeductionType;
-use App\Models\department;
-use App\Models\designation;
-use App\Models\DocumentType;
-use App\Models\Employee;
-use App\Http\traits\LeaveTypeDataManageTrait;
-use App\Imports\UsersImport;
-use App\Models\LoanType;
-use App\Models\office_shift;
-use App\Models\QualificationEducationLevel;
-use App\Models\QualificationLanguage;
-use App\Models\QualificationSkill;
-use App\Models\RelationType;
-use App\Models\status;
-use App\Models\User;
-use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
-use Spatie\Permission\Models\Role;
 use Throwable;
+use App\Models\User;
+use App\Models\status;
+use App\Models\company;
+use App\Models\Employee;
+use App\Models\LoanType;
+use App\Models\department;
+use App\Models\SalaryLoan;
+use App\Models\designation;
+use App\Models\SalaryBasic;
+use App\Imports\UsersImport;
+use App\Models\DocumentType;
+use App\Models\office_shift;
+use App\Models\RelationType;
+use Illuminate\Http\Request;
+use App\Models\DeductionType;
+use App\Models\SalaryAllowance;
+use App\Models\SalaryDeduction;
+use App\Models\SalaryCommission;
+use App\Models\QualificationSkill;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\QualificationLanguage;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Illuminate\Support\Facades\Validator;
+use App\Models\QualificationEducationLevel;
+use App\Http\traits\LeaveTypeDataManageTrait;
+use Maatwebsite\Excel\Validators\ValidationException;
 
 class EmployeeController extends Controller
 {
@@ -42,10 +47,10 @@ class EmployeeController extends Controller
                 ->where('designation_id', '=', $request->designation_id)
                 ->where('office_shift_id', '=', $request->office_shift_id)
                 ->where('is_active', 1)
-                ->where(function($query) use ($currentDate) {
+                ->where(function ($query) use ($currentDate) {
                     $query->whereNull('exit_date')
-                    ->orWhere('exit_date', '>=', $currentDate)
-                    ->orWhere('exit_date', '0000-00-00');
+                        ->orWhere('exit_date', '>=', $currentDate)
+                        ->orWhere('exit_date', '0000-00-00');
                 })
                 ->get();
         } elseif ($request->company_id && $request->department_id && $request->designation_id) {
@@ -54,10 +59,10 @@ class EmployeeController extends Controller
                 ->where('department_id', '=', $request->department_id)
                 ->where('designation_id', '=', $request->designation_id)
                 ->where('is_active', 1)
-                ->where(function($query) use ($currentDate) {
+                ->where(function ($query) use ($currentDate) {
                     $query->whereNull('exit_date')
-                    ->orWhere('exit_date', '>=', $currentDate)
-                    ->orWhere('exit_date', '0000-00-00');
+                        ->orWhere('exit_date', '>=', $currentDate)
+                        ->orWhere('exit_date', '0000-00-00');
                 })
                 ->get();
         } elseif ($request->company_id && $request->department_id) {
@@ -65,10 +70,10 @@ class EmployeeController extends Controller
                 ->where('company_id', '=', $request->company_id)
                 ->where('department_id', '=', $request->department_id)
                 ->where('is_active', 1)
-                ->where(function($query) use ($currentDate) {
+                ->where(function ($query) use ($currentDate) {
                     $query->whereNull('exit_date')
-                    ->orWhere('exit_date', '>=', $currentDate)
-                    ->orWhere('exit_date', '0000-00-00');
+                        ->orWhere('exit_date', '>=', $currentDate)
+                        ->orWhere('exit_date', '0000-00-00');
                 })
                 ->get();
         } elseif ($request->company_id && $request->office_shift_id) {
@@ -76,30 +81,30 @@ class EmployeeController extends Controller
                 ->where('company_id', '=', $request->company_id)
                 ->where('office_shift_id', '=', $request->office_shift_id)
                 ->where('is_active', 1)
-                ->where(function($query) use ($currentDate) {
+                ->where(function ($query) use ($currentDate) {
                     $query->whereNull('exit_date')
-                    ->orWhere('exit_date', '>=', $currentDate)
-                    ->orWhere('exit_date', '0000-00-00');
+                        ->orWhere('exit_date', '>=', $currentDate)
+                        ->orWhere('exit_date', '0000-00-00');
                 })
                 ->get();
         } elseif ($request->company_id) {
             $employees = Employee::with('user:id,profile_photo,username', 'company:id,company_name', 'department:id,department_name', 'designation:id,designation_name', 'officeShift:id,shift_name')
                 ->where('company_id', '=', $request->company_id)
                 ->where('is_active', 1)
-                ->where(function($query) use ($currentDate) {
+                ->where(function ($query) use ($currentDate) {
                     $query->whereNull('exit_date')
-                    ->orWhere('exit_date', '>=', $currentDate)
-                    ->orWhere('exit_date', '0000-00-00');
+                        ->orWhere('exit_date', '>=', $currentDate)
+                        ->orWhere('exit_date', '0000-00-00');
                 })
                 ->get();
         } else {
             $employees = Employee::with('user:id,profile_photo,username', 'company:id,company_name', 'department:id,department_name', 'designation:id,designation_name', 'officeShift:id,shift_name')
                 ->orderBy('company_id')
                 ->where('is_active', 1)
-                ->where(function($query) use ($currentDate) {
+                ->where(function ($query) use ($currentDate) {
                     $query->whereNull('exit_date')
-                    ->orWhere('exit_date', '>=', $currentDate)
-                    ->orWhere('exit_date', '0000-00-00');
+                        ->orWhere('exit_date', '>=', $currentDate)
+                        ->orWhere('exit_date', '0000-00-00');
                 })
                 ->get();
         }
@@ -126,67 +131,66 @@ class EmployeeController extends Controller
                     })
                     ->addColumn('name', function ($row) {
                         if ($row->user->profile_photo) {
-                            $url = url('uploads/profile_photos/'.$row->user->profile_photo);
-                            $profile_photo = '<img src="'.$url.'" class="profile-photo md" style="height:35px;width:35px"/>';
+                            $url = url('uploads/profile_photos/' . $row->user->profile_photo);
+                            $profile_photo = '<img src="' . $url . '" class="profile-photo md" style="height:35px;width:35px"/>';
                         } else {
                             $url = url('logo/avatar.jpg');
-                            $profile_photo = '<img src="'.$url.'" class="profile-photo md" style="height:35px;width:35px"/>';
+                            $profile_photo = '<img src="' . $url . '" class="profile-photo md" style="height:35px;width:35px"/>';
                         }
-                        $name = '<span><a href="employees/'.$row->id.'" class="d-block text-bold" style="color:#24ABF2">'.$row->full_name.'</a></span>';
-                        $username = '<span>'.__('file.Username').': '.($row->user->username ?? '').'</span>';
-                        $staff_id = '<span>'.__('file.Staff Id').': '.($row->staff_id ?? '').'</span>';
+                        $name = '<span><a href="employees/' . $row->id . '" class="d-block text-bold" style="color:#24ABF2">' . $row->full_name . '</a></span>';
+                        $username = '<span>' . __('file.Username') . ': ' . ($row->user->username ?? '') . '</span>';
+                        $staff_id = '<span>' . __('file.Staff Id') . ': ' . ($row->staff_id ?? '') . '</span>';
                         $gender = '';
                         if ($row->gender != null) {
-                            $gender = '<span>'.__('file.Gender').': '.__('file.'.$row->gender ?? '').'</span></br>';
+                            $gender = '<span>' . __('file.Gender') . ': ' . __('file.' . $row->gender ?? '') . '</span></br>';
                         }
 
-                        $shift = '<span>'.__('file.Shift').': '.($row->officeShift->shift_name ?? '').'</span>';
+                        $shift = '<span>' . __('file.Shift') . ': ' . ($row->officeShift->shift_name ?? '') . '</span>';
                         if (config('variable.currency_format') == 'suffix') {
-                            $salary = '<span>'.__('file.Salary').': '.($row->basic_salary ?? '').' '.config('variable.currency').'</span>';
+                            $salary = '<span>' . __('file.Salary') . ': ' . ($row->basic_salary ?? '') . ' ' . config('variable.currency') . '</span>';
                         } else {
-                            $salary = '<span>'.__('file.Salary').': '.config('variable.currency').' '.($row->basic_salary ?? '').'</span>';
+                            $salary = '<span>' . __('file.Salary') . ': ' . config('variable.currency') . ' ' . ($row->basic_salary ?? '') . '</span>';
                         }
 
                         if ($row->payslip_type) {
-                            $payslip_type = '<span>'.__('file.Payslip Type').': '.__('file.'.$row->payslip_type).'</span>';
+                            $payslip_type = '<span>' . __('file.Payslip Type') . ': ' . __('file.' . $row->payslip_type) . '</span>';
                         } else {
                             $payslip_type = ' ';
                         }
 
                         return "<div class='d-flex'>
-                                        <div class='mr-2'>".$profile_photo.'</div>
+                                        <div class='mr-2'>" . $profile_photo . '</div>
                                         <div>'
-                                            .$name.'</br>'.$username.'</br>'.$staff_id.'</br>'.$gender.$shift.'</br>'.$salary.'</br>'.$payslip_type;
-
+                            . $name . '</br>' . $username . '</br>' . $staff_id . '</br>' . $gender . $shift . '</br>' . $salary . '</br>' . $payslip_type;
                     })
                     ->addColumn('company', function ($row) {
-                        $company = "<span class='text-bold'>".strtoupper($row->company->company_name ?? '').'</span>';
-                        $department = '<span>'.__('file.Department').' : '.($row->department->department_name ?? '').'</span>';
-                        $designation = '<span>'.__('file.Designation').' : '.($row->designation->designation_name ?? '').'</span>';
+                        $company = "<span class='text-bold'>" . strtoupper($row->company->company_name ?? '') . '</span>';
+                        $department = '<span>' . __('file.Department') . ' : ' . ($row->department->department_name ?? '') . '</span>';
+                        $designation = '<span>' . __('file.Designation') . ' : ' . ($row->designation->designation_name ?? '') . '</span>';
 
-                        return $company.'</br>'.$department.'</br>'.$designation;
+                        return $company . '</br>' . $department . '</br>' . $designation;
                     })
                     ->addColumn('contacts', function ($row) {
-                        $email = "<i class='fa fa-envelope text-muted' title='Email'></i> ".$row->email;
-                        $contact_no = "<i class='text-muted fa fa-phone' title='Phone'></i> ".$row->contact_no;
-                        $skype_id = "<i class='text-muted fa fa-skype' title='Skype'></i> ".$row->skype_id;
-                        $whatsapp_id = "<i class='text-muted fa fa-whatsapp' title='Whats App'></i> ".$row->whatsapp_id;
+                        $email = "<i class='fa fa-envelope text-muted' title='Email'></i> " . $row->email;
+                        $contact_no = "<i class='text-muted fa fa-phone' title='Phone'></i> " . $row->contact_no;
+                        $skype_id = "<i class='text-muted fa fa-skype' title='Skype'></i> " . $row->skype_id;
+                        $whatsapp_id = "<i class='text-muted fa fa-whatsapp' title='Whats App'></i> " . $row->whatsapp_id;
 
-                        return $email.'</br>'.$contact_no.'</br>'.$skype_id.'</br>'.$whatsapp_id;
+                        return $email . '</br>' . $contact_no . '</br>' . $skype_id . '</br>' . $whatsapp_id;
                     })
                     ->addColumn('action', function ($data) {
                         $button = '';
                         if (auth()->user()->can('view-details-employee')) {
-                            $button .= '<a href="employees/'.$data->id.'"  class="edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="View Details"><i class="dripicons-preview"></i></button></a>';
+                            $button .= '<a href="employees/' . $data->id . '"  class="edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="View Details"><i class="dripicons-preview"></i></button></a>';
                             $button .= '&nbsp;&nbsp;&nbsp;';
                         }
                         if (auth()->user()->can('modify-details-employee')) {
                             if ($data->role_users_id != 1) {
-                                $button .= '<button type="button" name="delete" id="'.$data->id.'" class="delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="dripicons-trash"></i></button>';
+                                $button .= '<button type="button" name="delete" id="' . $data->id . '" class="delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="dripicons-trash"></i></button>';
                                 $button .= '&nbsp;&nbsp;&nbsp;';
                             }
 
-                            $button .= '<a class="download btn-sm" style="background:#FF7588; color:#fff" title="PDF" href="'.route('employees.pdf', $data->id).'"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>';
+                            $button .= '<a class="download btn-sm" style="background:#FF7588; color:#fff" title="PDF" href="' . route('employees.pdf', $data->id) . '"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></a>';
                         }
 
                         return $button;
@@ -206,8 +210,26 @@ class EmployeeController extends Controller
 
         if ($logged_user->can('store-details-employee')) {
             if (request()->ajax()) {
-                $validator = Validator::make($request->only('first_name', 'last_name', 'staff_id', 'email', 'contact_no', 'date_of_birth', 'gender',
-                    'username', 'role_users_id', 'password', 'password_confirmation', 'company_id', 'department_id', 'designation_id', 'office_shift_id', 'attendance_type', 'joining_date'),
+                $validator = Validator::make(
+                    $request->only(
+                        'first_name',
+                        'last_name',
+                        'staff_id',
+                        'email',
+                        'contact_no',
+                        'date_of_birth',
+                        'gender',
+                        'username',
+                        'role_users_id',
+                        'password',
+                        'password_confirmation',
+                        'company_id',
+                        'department_id',
+                        'designation_id',
+                        'office_shift_id',
+                        'attendance_type',
+                        'joining_date'
+                    ),
                     [
                         'first_name' => 'required',
                         'last_name' => 'required',
@@ -266,7 +288,7 @@ class EmployeeController extends Controller
                 if (isset($photo)) {
                     $new_user = $request->username;
                     if ($photo->isValid()) {
-                        $file_name = preg_replace('/\s+/', '', $new_user).'_'.time().'.'.$photo->getClientOriginalExtension();
+                        $file_name = preg_replace('/\s+/', '', $new_user) . '_' . time() . '.' . $photo->getClientOriginalExtension();
                         $photo->storeAs('profile_photos', $file_name);
                         $user['profile_photo'] = $file_name;
                     }
@@ -324,14 +346,28 @@ class EmployeeController extends Controller
             $education_levels = QualificationEducationLevel::select('id', 'name')->get();
             $language_skills = QualificationLanguage::select('id', 'name')->get();
             $general_skills = QualificationSkill::select('id', 'name')->get();
-            $relationTypes = RelationType::select('id','type_name')->get();
-            $loanTypes = LoanType::select('id','type_name')->get();
-            $deductionTypes = DeductionType::select('id','type_name')->get();
+            $relationTypes = RelationType::select('id', 'type_name')->get();
+            $loanTypes = LoanType::select('id', 'type_name')->get();
+            $deductionTypes = DeductionType::select('id', 'type_name')->get();
             $roles = Role::where('id', '!=', 3)->where('is_active', 1)->select('id', 'name')->get();
 
-            return view('employee.dashboard', compact('employee', 'countries', 'companies',
-                'departments', 'designations', 'statuses', 'office_shifts', 'document_types',
-                'education_levels', 'language_skills', 'general_skills', 'roles','relationTypes','loanTypes','deductionTypes'));
+            return view('employee.dashboard', compact(
+                'employee',
+                'countries',
+                'companies',
+                'departments',
+                'designations',
+                'statuses',
+                'office_shifts',
+                'document_types',
+                'education_levels',
+                'language_skills',
+                'general_skills',
+                'roles',
+                'relationTypes',
+                'loanTypes',
+                'deductionTypes'
+            ));
         } else {
             return response()->json(['success' => __('You are not authorized')]);
         }
@@ -378,7 +414,7 @@ class EmployeeController extends Controller
         $file_path = $user->profile_photo;
 
         if ($file_path) {
-            $file_path = public_path('uploads/profile_photos/'.$file_path);
+            $file_path = public_path('uploads/profile_photos/' . $file_path);
             if (file_exists($file_path)) {
                 unlink($file_path);
             }
@@ -411,17 +447,41 @@ class EmployeeController extends Controller
 
         if ($logged_user->can('modify-details-employee')) {
             if (request()->ajax()) {
-                $validator = Validator::make($request->only('first_name', 'last_name', 'staff_id', 'email', 'contact_no', 'date_of_birth', 'gender',
-                    'username', 'role_users_id', 'company_id', 'department_id', 'designation_id', 'office_shift_id', 'location_id', 'status_id',
-                    'marital_status', 'joining_date', 'permission_role_id', 'address', 'city', 'state', 'country', 'zip_code', 'attendance_type', 'total_leave'
-                ),
+                $validator = Validator::make(
+                    $request->only(
+                        'first_name',
+                        'last_name',
+                        'staff_id',
+                        'email',
+                        'contact_no',
+                        'date_of_birth',
+                        'gender',
+                        'username',
+                        'role_users_id',
+                        'company_id',
+                        'department_id',
+                        'designation_id',
+                        'office_shift_id',
+                        'location_id',
+                        'status_id',
+                        'marital_status',
+                        'joining_date',
+                        'permission_role_id',
+                        'address',
+                        'city',
+                        'state',
+                        'country',
+                        'zip_code',
+                        'attendance_type',
+                        'total_leave'
+                    ),
                     [
                         'first_name' => 'required',
                         'last_name' => 'required',
-                        'username' => 'required|unique:users,username,'.$employee,
-                        'staff_id' => 'required|numeric|unique:employees,staff_id,'.$employee,
-                        'email' => 'nullable|email|unique:users,email,'.$employee,
-                        'contact_no' => 'required|numeric|unique:users,contact_no,'.$employee,
+                        'username' => 'required|unique:users,username,' . $employee,
+                        'staff_id' => 'required|numeric|unique:employees,staff_id,' . $employee,
+                        'email' => 'nullable|email|unique:users,email,' . $employee,
+                        'contact_no' => 'required|numeric|unique:users,contact_no,' . $employee,
                         'date_of_birth' => 'required',
                         'company_id' => 'required',
                         'department_id' => 'required',
@@ -528,11 +588,9 @@ class EmployeeController extends Controller
             Employee::whereId($employee)->update($data);
 
             return response()->json(['success' => __('Data is successfully updated')]);
-
         }
 
         return response()->json(['success' => __('You are not authorized')]);
-
     }
 
     public function indexProfilePicture(Employee $employee)
@@ -559,7 +617,7 @@ class EmployeeController extends Controller
             if (isset($photo)) {
                 $new_user = $request->employee_username;
                 if ($photo->isValid()) {
-                    $file_name = preg_replace('/\s+/', '', $new_user).'_'.time().'.'.$photo->getClientOriginalExtension();
+                    $file_name = preg_replace('/\s+/', '', $new_user) . '_' . time() . '.' . $photo->getClientOriginalExtension();
                     $photo->storeAs('profile_photos', $file_name);
                     $data['profile_photo'] = $file_name;
                 }
@@ -570,7 +628,6 @@ class EmployeeController extends Controller
             User::whereId($employee)->update($data);
 
             return response()->json(['success' => 'Data is successfully updated', 'profile_picture' => $file_name]);
-
         }
 
         return response()->json(['success' => __('You are not authorized')]);
@@ -592,8 +649,11 @@ class EmployeeController extends Controller
 
         if ($logged_user->can('modify-details-employee')) {
 
-            $validator = Validator::make($request->only('payslip_type', 'basic_salary'
-            ),
+            $validator = Validator::make(
+                $request->only(
+                    'payslip_type',
+                    'basic_salary'
+                ),
                 [
                     'basic_salary' => 'required|numeric',
                     'payslip_type' => 'required',
@@ -608,7 +668,8 @@ class EmployeeController extends Controller
             try {
                 Employee::updateOrCreate(['id' => $employee], [
                     'payslip_type' => $request->payslip_type,
-                    'basic_salary' => $request->basic_salary]);
+                    'basic_salary' => $request->basic_salary
+                ]);
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollback();
@@ -633,10 +694,12 @@ class EmployeeController extends Controller
 
         if ($logged_user->can('modify-details-employee')) {
 
-            $validator = Validator::make($request->only('pension_type', 'pension_amount'), [
-                'pension_type' => 'required',
-                'pension_amount' => 'required|numeric',
-            ]
+            $validator = Validator::make(
+                $request->only('pension_type', 'pension_amount'),
+                [
+                    'pension_type' => 'required',
+                    'pension_amount' => 'required|numeric',
+                ]
             );
 
             if ($validator->fails()) {
@@ -647,7 +710,8 @@ class EmployeeController extends Controller
             try {
                 Employee::updateOrCreate(['id' => $employee], [
                     'pension_type' => $request->pension_type,
-                    'pension_amount' => $request->pension_amount]);
+                    'pension_amount' => $request->pension_amount
+                ]);
                 DB::commit();
             } catch (Exception $e) {
                 DB::rollback();
@@ -663,7 +727,6 @@ class EmployeeController extends Controller
         }
 
         return response()->json(['success' => __('You are not authorized')]);
-
     }
 
     public function import()
@@ -695,7 +758,6 @@ class EmployeeController extends Controller
         $this->setSuccessMessage(__('Imported Successfully'));
 
         return back();
-
     }
 
     public function employeePDF($id)
@@ -710,5 +772,114 @@ class EmployeeController extends Controller
         return $pdf->download('employee.pdf');
 
         // return $pdf->stream();
+    }
+
+    public function compensation()
+    {
+
+        $user = auth()->user();
+
+        $employee = Employee::find($user->id);
+
+
+        if (request()->ajax()) {
+            $salary_basics = SalaryBasic::with('payslipMonthYear')
+                ->where('employee_id', $employee->id)
+                ->orderByRaw('DATE_FORMAT(first_date, "%y-%m")')
+                ->get();
+
+            return datatables()->of($salary_basics)
+                ->setRowId(function ($row) {
+                    return $row->id;
+                })
+
+                ->make(true);
+        }
+
+        return view('employee.compensation.fixed_compensation', compact('employee'));
+    }
+
+    public function commission()
+    {
+        $user = auth()->user();
+
+        $employee = Employee::find($user->id);
+
+        if (request()->ajax()) {
+            return datatables()->of(SalaryCommission::where('employee_id', $employee->id)->orderByRaw('DATE_FORMAT(first_date, "%y-%m")')->get())
+                ->setRowId(function ($commission) {
+                    return $commission->id;
+                })
+                ->make(true);
+        }
+        return view('employee.compensation.commission', compact('employee'));
+    }
+
+    public function allowances()
+    {
+        $user = auth()->user();
+
+        $employee = Employee::find($user->id);
+
+        if (request()->ajax()) {
+            $salaryAllowance = SalaryAllowance::where('employee_id', $employee->id)
+                ->orderByRaw('DATE_FORMAT(first_date, "%y-%m")')
+                ->get();
+
+            return datatables()->of($salaryAllowance)
+                ->setRowId(function ($allowance) {
+                    return $allowance->id;
+                })
+                ->make(true);
+        }
+        return view('employee.compensation.allowances', compact('employee'));
+    }
+    public function loanDetails()
+    {
+        $user = auth()->user();
+
+        $employee = Employee::find($user->id);
+
+        if (request()->ajax()) {
+            return datatables()->of(SalaryLoan::where('employee_id', $employee->id)
+                ->join('loan_types', 'salary_loans.loan_type_id', '=', 'loan_types.id')
+                ->select('salary_loans.*', 'loan_types.type_name as loan_type')
+                ->orderByRaw('DATE_FORMAT(first_date, "%y-%m")')
+                ->get())
+                ->setRowId(function ($loan) {
+                    return $loan->id;
+                })
+                ->addColumn('loan_remaining', function ($row) {
+                    return __('Amount Remaining: ') . $row->amount_remaining . '<br>' .
+                        __('Installment Remaining: ') . $row->time_remaining;
+                })
+
+                ->rawColumns(['loan_remaining'])
+                ->make(true);
+        }
+        return view('employee.compensation.loan', compact('employee'));
+    }
+    public function statutoryDeduction()
+    {
+        $user = auth()->user();
+
+        $employee = Employee::find($user->id);
+
+        if (request()->ajax()) {
+            return datatables()->of(SalaryDeduction::where('employee_id', $employee->id)
+                ->join('deduction_types', 'salary_deductions.deduction_type_id', '=', 'deduction_types.id')
+                ->select('salary_deductions.*', 'deduction_types.type_name as deduction_type')
+                ->orderByRaw('DATE_FORMAT(first_date, "%y-%m")')
+                ->get())
+                ->setRowId(function ($deduction) {
+                    return $deduction->id;
+                })
+                ->addColumn('deduction_type', function ($data) {
+                    return $data->deductionType->type_name ?? " ";
+                })
+
+                ->make(true);
+        }
+        return view('employee.compensation.statutoryDeduction', compact('employee'));
     }
 }

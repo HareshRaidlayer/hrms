@@ -132,6 +132,7 @@ use App\Http\Controllers\Variables\DeductionTypeController;
 use App\Http\Controllers\Variables\DepositCategoryController;
 use App\Http\Controllers\Variables\LoanTypeController;
 use App\Http\Controllers\JobQuestionController;
+use App\Http\Controllers\OnboardingController;
 use Illuminate\Support\Facades\File;
 
 
@@ -244,7 +245,23 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
             Route::get('pdf/{id}', [EmployeeController::class, 'employeePDF'])->name('employees.pdf');
             Route::post('{employee}/pension_update', [EmployeeController::class, 'employeesPensionUpdate'])->name('employees.pension_update');
             Route::post('{employee}/infoUpdate', [EmployeeController::class, 'infoUpdate'])->name('employees_basicInfo.update');
+
+            // employee pannel
         });
+        Route::get('/compensation/details', [EmployeeController::class, 'compensation'])->name('employees.compensation');
+        Route::get('/commission/details', [EmployeeController::class, 'commission'])->name('employees.commission');
+        Route::get('/allowances/details', [EmployeeController::class, 'allowances'])->name('employees.allowances');
+        Route::get('/allowances/details', [EmployeeController::class, 'allowances'])->name('employees.allowances');
+        Route::get('/loan/details', [EmployeeController::class, 'loanDetails'])->name('employees.lonDetails');
+        Route::get('/statutory-deduction/details', [EmployeeController::class, 'statutoryDeduction'])->name('employees.statutoryDeduction');
+
+        Route::prefix('onboarding')->group(function () {
+                // Route::get('onboarding', [JobQuestionController::class, 'onboarding'])->name('onboarding');
+                Route::get('/index', [OnboardingController::class, 'index'])->name('onboarding.index');
+                Route::get('/employee/document/{id}', [OnboardingController::class, 'dashboard'])->name('onboarding.dashboard');
+                Route::post('/employee/documents/update', [OnboardingController::class, 'update'])->name('onboarding.documents.update');
+                Route::delete('/employee/documents/delete/{id}', [OnboardingController::class, 'destroy'])->name('onboarding.documents.destroy');
+            });
 
         Route::prefix('immigrations')->group(function () {
             Route::get('/', [EmployeeImmigrationController::class, 'index'])->name('immigrations.index');
