@@ -49,12 +49,10 @@ class OnboardingController extends Controller
                     return $row->status ?? '-';
                 })
                 ->addColumn('action', function ($row) {
-                    $url = route('onboarding.dashboard', ['id' => $row->id]);
+                    $url = route('onboarding.onboardCandadite', ['id' => $row->id]);
                     $button = '<a href="' . $url . '" name="show" class="btn btn-light btn-sm">' . __('Onboarding') . '</a>';
                     return $button;
                 })
-
-
 
                 ->rawColumns(['action'])
                 ->make(true);
@@ -262,4 +260,9 @@ class OnboardingController extends Controller
 			return abort('404', __('File not Found'));
 		}
 	}
+
+    public function onboardCandadite($id){
+
+        return view('onboarding.onbord_tab');
+    }
 }
