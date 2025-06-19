@@ -587,7 +587,8 @@
                     <?php endif; ?>
 
                     <?php if(Auth::user()->role_users_id===2): ?>
-                        <li class="has-dropdown <?php echo e((request()->is('compensation*')) ? 'active' : ''); ?>">
+                        <li class="has-dropdown <?php echo e((request()->is('staff/compensation/details') || request()->is('staff/allowances/details') || request()->is('staff/commission/details')
+                        || request()->is('staff/loan/details') || request()->is('staff/statutory-deduction/details') ) ? 'active' : ''); ?>">
                                 <a href="#compensation" aria-expanded="false" data-toggle="collapse"> <i
                                             class="dripicons-archive"></i><span><?php echo e(__('Compensation')); ?></span>
                                 </a>

@@ -228,7 +228,7 @@
                             <tbody>
                                 @foreach ($interviews as $interview)
                                     <tr>
-                                        <td>{{ $interview->jobPost->job_title ?? '' }}</td>
+                                        <td>{{ $interview->jobPost->job_title ?? '' }} ({{$interview->interview_place ?? ''}})</td>
                                         <td>{{ $interview->interview_date ?? '' }},
                                             {{ $interview->interview_time ?? '' }}</td>
 

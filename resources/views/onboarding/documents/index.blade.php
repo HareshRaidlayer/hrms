@@ -11,10 +11,10 @@
 
 
         <div class="container-fluid">
-            @if(auth()->user()->can('store-details-employee') || auth()->user()->id == $employee->id)
+            
                 <button type="button" class="btn btn-info" name="create_record" id="create_document_record"><i
                         class="fa fa-plus"></i>{{__('Add Document')}}</button>
-            @endif
+           
         </div>
 
 
@@ -247,7 +247,7 @@
                 if ($('#document_action').val() == '{{trans('file.Add')}}') {
 
                     $.ajax({
-                        url: "{{ route('documents.store', $employee->id) }}",
+                        url: "{{ route('onboarding.documents.store', $employee->id) }}",
                         method: "POST",
                         data: new FormData(this),
                         contentType: false,
@@ -320,11 +320,12 @@
 
                 var id = $(this).attr('id');
 
-                var target = "{{ route('documents.index') }}/" + id + '/edit';
-
+                // var target = `/onboarding/candidate/documents/edit/${id}`;
+                var target = "{{ route('onboarding.documents.edit', ['id' => '__ID__']) }}".replace('__ID__', id);
 
                 $.ajax({
                     url: target,
+                    method: 'GET',
                     dataType: "json",
                     success: function (html) {
 
@@ -368,7 +369,8 @@
             });
 
             $('.document-ok').off().on('click', function () {
-                const deleteUrl = `/onboarding/employee/documents/delete/${document_delete_id}`;
+                // const deleteUrl = `/onboarding/employee/documents/delete/${document_delete_id}`;
+                const deleteUrl = "{{ route('onboarding.documents.destroy', ['id' => '__ID__']) }}".replace('__ID__', document_delete_id);
 
                 $.ajax({
                     url: deleteUrl,
