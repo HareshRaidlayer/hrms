@@ -373,6 +373,11 @@
                                             href="{{route('job_interviews.index')}}">{{__('Job Interview')}}</a>
                                 </li>
                             @endcan
+                            @can('job_interview_question')
+                                <li id="job_interview_question"><a
+                                            href="{{route('job_questions.index')}}">{{__('Job Question ')}}</a>
+                                </li>
+                            @endcan
                             @can('view-cms')
                                 <li id="cms"><a
                                             href="{{route('cms.index')}}">{{__('CMS')}}</a>
@@ -586,12 +591,37 @@
                         </li>
                     @endcan
 
-                    @if (Auth::user()->role_users_id===1)
+                    @if(Auth::user()->role_users_id===2)
+                        <li class="has-dropdown {{ (request()->is('compensation*')) ? 'active' : '' }}">
+                                <a href="#compensation" aria-expanded="false" data-toggle="collapse"> <i
+                                            class="dripicons-archive"></i><span>{{__('Compensation')}}</span>
+                                </a>
+                            
+                            <ul id="compensation" class="collapse list-unstyled ">
+                                <li id="fixed_compensation"><a
+                                            href="{{route('employees.compensation')}}">{{__('Fixed Compensation')}}</a>
+                                </li>
+                                <li id="compensation_per_production"><a
+                                            href="{{route('employees.commission')}}">{{__('Compensation Per Production')}}</a>
+                                </li>
+                                <li id="allowances"><a
+                                            href="{{route('employees.allowances')}}">{{__('Allowances')}}</a>
+                                </li>
+                                <li id="bonuses"><a
+                                            href="{{route('employees.lonDetails')}}">{{__('Loan')}}</a>
+                                </li>
+                                <li id="statutoryDeduction"><a
+                                            href="{{route('employees.statutoryDeduction')}}">{{__('Statutory Deduction')}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endcan
+                    {{-- @if (Auth::user()->role_users_id===1)
                         <li class="{{ (request()->is('addons*')) ? 'active' : '' }}">
                             <a href="{{route('addons')}}"> <i class="dripicons-flag"></i><span>{{__('Addons')}}</span>
                             </a>
                         </li>
-                    @endif
+                    @endif --}}
 
             </ul>
         </div>

@@ -131,6 +131,8 @@ use App\Http\Controllers\Addon\SaasController;
 use App\Http\Controllers\Variables\DeductionTypeController;
 use App\Http\Controllers\Variables\DepositCategoryController;
 use App\Http\Controllers\Variables\LoanTypeController;
+use App\Http\Controllers\JobQuestionController;
+use App\Http\Controllers\OnboardingController;
 use Illuminate\Support\Facades\File;
 
 
@@ -243,7 +245,23 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
             Route::get('pdf/{id}', [EmployeeController::class, 'employeePDF'])->name('employees.pdf');
             Route::post('{employee}/pension_update', [EmployeeController::class, 'employeesPensionUpdate'])->name('employees.pension_update');
             Route::post('{employee}/infoUpdate', [EmployeeController::class, 'infoUpdate'])->name('employees_basicInfo.update');
+
+            // employee pannel
         });
+        Route::get('/compensation/details', [EmployeeController::class, 'compensation'])->name('employees.compensation');
+        Route::get('/commission/details', [EmployeeController::class, 'commission'])->name('employees.commission');
+        Route::get('/allowances/details', [EmployeeController::class, 'allowances'])->name('employees.allowances');
+        Route::get('/allowances/details', [EmployeeController::class, 'allowances'])->name('employees.allowances');
+        Route::get('/loan/details', [EmployeeController::class, 'loanDetails'])->name('employees.lonDetails');
+        Route::get('/statutory-deduction/details', [EmployeeController::class, 'statutoryDeduction'])->name('employees.statutoryDeduction');
+
+        Route::prefix('onboarding')->group(function () {
+                // Route::get('onboarding', [JobQuestionController::class, 'onboarding'])->name('onboarding');
+                Route::get('/index', [OnboardingController::class, 'index'])->name('onboarding.index');
+                Route::get('/employee/document/{id}', [OnboardingController::class, 'dashboard'])->name('onboarding.dashboard');
+                Route::post('/employee/documents/update', [OnboardingController::class, 'update'])->name('onboarding.documents.update');
+                Route::delete('/employee/documents/delete/{id}', [OnboardingController::class, 'destroy'])->name('onboarding.documents.destroy');
+            });
 
         Route::prefix('immigrations')->group(function () {
             Route::get('/', [EmployeeImmigrationController::class, 'index'])->name('immigrations.index');
@@ -606,9 +624,23 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
         Route::post('job_interviews/update', [JobInterviewController::class, 'update'])->name('job_interviews.update');
         Route::resource('job_interviews', JobInterviewController::class)->except(['destroy', 'create', 'update']);
         Route::get('job_interviews/{id}/delete', [JobInterviewController::class, 'destroy'])->name('job_interviews.destroy');
+        Route::get('/interview/manage/{id}', [JobInterviewController::class, 'manageInterview'])->name('job_interviews.manage');
 
         Route::get('cms', [CmsController::class, 'index'])->name('cms.index');
         Route::post('cms', [CmsController::class, 'store'])->name('cms.store');
+
+        // job Questions
+        Route::get('manage/interview', [JobQuestionController::class, 'manageInterview'])->name('job.manageInterview');
+        Route::get('job-questions', [JobQuestionController::class, 'index'])->name('job_questions.index');
+        Route::post('job-questions/add', [JobQuestionController::class, 'store'])->name('job_questions.store');
+        
+        Route::get('job-questions/{id}/edit', [JobQuestionController::class, 'edit'])->name('job_questions.edit');
+        Route::post('job-questions/update', [JobQuestionController::class, 'update'])->name('job_questions.update');
+        Route::get('job-questions/{id}/delete', [JobQuestionController::class, 'destroy'])->name('job_questions.destroy');
+        Route::post('questions/delete/selected', [JobQuestionController::class, 'delete_by_selection'])->name('mass_delete_job_questions');
+        Route::post('/interview/answers/save', [JobQuestionController::class, 'saveAnswers'])->name('job_questions.answers.save');
+
+
     });
 
     Route::prefix('training')->group(function () {

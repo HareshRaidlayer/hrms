@@ -368,6 +368,11 @@
                                             href="<?php echo e(route('job_interviews.index')); ?>"><?php echo e(__('Job Interview')); ?></a>
                                 </li>
                             <?php endif; ?>
+                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('job_interview_question')): ?>
+                                <li id="job_interview_question"><a
+                                            href="<?php echo e(route('job_questions.index')); ?>"><?php echo e(__('Job Question ')); ?></a>
+                                </li>
+                            <?php endif; ?>
                             <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('view-cms')): ?>
                                 <li id="cms"><a
                                             href="<?php echo e(route('cms.index')); ?>"><?php echo e(__('CMS')); ?></a>
@@ -581,12 +586,32 @@
                         </li>
                     <?php endif; ?>
 
-                    <?php if(Auth::user()->role_users_id===1): ?>
-                        <li class="<?php echo e((request()->is('addons*')) ? 'active' : ''); ?>">
-                            <a href="<?php echo e(route('addons')); ?>"> <i class="dripicons-flag"></i><span><?php echo e(__('Addons')); ?></span>
-                            </a>
+                    <?php if(Auth::user()->role_users_id===2): ?>
+                        <li class="has-dropdown <?php echo e((request()->is('compensation*')) ? 'active' : ''); ?>">
+                                <a href="#compensation" aria-expanded="false" data-toggle="collapse"> <i
+                                            class="dripicons-archive"></i><span><?php echo e(__('Compensation')); ?></span>
+                                </a>
+                            
+                            <ul id="compensation" class="collapse list-unstyled ">
+                                <li id="fixed_compensation"><a
+                                            href="<?php echo e(route('employees.compensation')); ?>"><?php echo e(__('Fixed Compensation')); ?></a>
+                                </li>
+                                <li id="compensation_per_production"><a
+                                            href="<?php echo e(route('employees.commission')); ?>"><?php echo e(__('Compensation Per Production')); ?></a>
+                                </li>
+                                <li id="allowances"><a
+                                            href="<?php echo e(route('employees.allowances')); ?>"><?php echo e(__('Allowances')); ?></a>
+                                </li>
+                                <li id="bonuses"><a
+                                            href="<?php echo e(route('employees.lonDetails')); ?>"><?php echo e(__('Loan')); ?></a>
+                                </li>
+                                <li id="statutoryDeduction"><a
+                                            href="<?php echo e(route('employees.statutoryDeduction')); ?>"><?php echo e(__('Statutory Deduction')); ?></a>
+                                </li>
+                            </ul>
                         </li>
                     <?php endif; ?>
+                    
 
             </ul>
         </div>
