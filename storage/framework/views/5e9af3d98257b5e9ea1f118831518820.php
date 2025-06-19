@@ -612,6 +612,12 @@
                             </ul>
                         </li>
                     <?php endif; ?>
+                    <?php if(Auth::user()->role_users_id===6): ?>
+                    <li class="<?php echo e((request()->is('offboarding*')) ? 'active' : ''); ?>"><a
+                                href="<?php echo e(route('offboarding.index')); ?>"> <i
+                                    class="dripicons-calendar"></i><span><?php echo e(__('Off boarding')); ?></span></a>
+                    </li>
+                    <?php endif; ?>
                     
 
             </ul>

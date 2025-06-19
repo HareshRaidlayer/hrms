@@ -617,6 +617,12 @@
                             </ul>
                         </li>
                     @endcan
+                    @if(Auth::user()->role_users_id===6)
+                    <li class="{{ (request()->is('offboarding*')) ? 'active' : '' }}"><a
+                                href="{{route('offboarding.index')}}"> <i
+                                    class="dripicons-calendar"></i><span>{{__('Off boarding')}}</span></a>
+                    </li>
+                    @endcan
                     {{-- @if (Auth::user()->role_users_id===1)
                         <li class="{{ (request()->is('addons*')) ? 'active' : '' }}">
                             <a href="{{route('addons')}}"> <i class="dripicons-flag"></i><span>{{__('Addons')}}</span>
