@@ -373,6 +373,11 @@
                                             href="{{route('job_interviews.index')}}">{{__('Job Interview')}}</a>
                                 </li>
                             @endcan
+                            @can('job_interview_question')
+                                <li id="job_interview_question"><a
+                                            href="{{route('job_questions.index')}}">{{__('Job Question ')}}</a>
+                                </li>
+                            @endcan
                             @can('view-cms')
                                 <li id="cms"><a
                                             href="{{route('cms.index')}}">{{__('CMS')}}</a>

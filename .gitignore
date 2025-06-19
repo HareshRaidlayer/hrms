@@ -26,3 +26,4 @@ Thumbs.db
 /storage/framework/cache/data
 /storage/logs
 /storage/debugbar
+/storage/framework/

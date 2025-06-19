@@ -58,7 +58,8 @@ class JobInterviewController extends Controller {
 					{
 						$button = '<button type="button" name="show" id="' . $data->id . '" class="details btn btn-success btn-sm">Details</button>';
 						$button .= '&nbsp;&nbsp;';
-
+						$button .= '<button type="button" name="namage" data-id="' . $data->id . '" class=" btn btn-warning btn-sm manage-interview" title="Manage Interview"><i class="dripicons-list"></i></button>';
+						$button .= '&nbsp;&nbsp;';
 						if (auth()->user()->can('delete-job_interview'))
 						{
 							$button .= '<button type="button" name="delete" id="' . $data->id . '" class="delete btn btn-danger btn-sm"><i class="dripicons-trash"></i></button>';
@@ -201,4 +202,20 @@ class JobInterviewController extends Controller {
 
 		return response()->json(['success' => __('You are not authorized')]);
 	}
+
+	public function manageInterview($id)
+    {
+        $interview = JobInterview::with('jobQuestions')->find($id);
+
+
+        if ($interview) {
+			return response()->json([ 'data' =>$interview]);
+        }else{
+            return response()->json(['message' => 'Interview not found'], 404);
+		}
+
+
+    }
+
+
 }

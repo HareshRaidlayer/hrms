@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class LoginController extends Controller
 {
@@ -39,6 +40,12 @@ class LoginController extends Controller
         $user->last_login_ip = $request->ip();
         $user->save();
 
+        if ($user->role_users_id) {
+        $role = Role::find($user->role_users_id);
+        if ($role) {
+            $user->syncRoles([$role->name]);  // assigns or updates the role
+        }
+    }
         if ($user->role_users_id == 1)
         {
             return redirect('/admin/dashboard');

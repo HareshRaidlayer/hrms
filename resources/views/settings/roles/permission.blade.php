@@ -827,6 +827,29 @@
                                             },
                                         ]
                                     },
+                                    {
+                                        id: 'job_interview_question',
+                                        text: "{{trans('Job Question')}}",
+                                        expanded: true,
+                                        checked: ($.inArray('job_interview', result) >= 0) ? true : false,
+                                        items: [
+                                            {
+                                                id: 'job_interview_question',
+                                                text: '{{__('View Job Interview question')}}',
+                                                checked: ($.inArray('job_interview_question', result) >= 0) ? true : false
+                                            },
+                                            {
+                                                id: 'store-job_interview_question',
+                                                text: "{{__('Store Job Interview question')}}",
+                                                checked: ($.inArray('store-job_interview_question', result) >= 0) ? true : false
+                                            },
+                                            {
+                                                id: 'delete-job_interview_question',
+                                                text: "{{__('Delete Job Interview question')}}",
+                                                checked: ($.inArray('delete-job_interview_question', result) >= 0) ? true : false
+                                            },
+                                        ]
+                                    },
                                 ]
                             },
                             {

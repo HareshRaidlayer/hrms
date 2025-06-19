@@ -26,6 +26,15 @@ class JobInterview extends Model
 	public function candidates(){
 		return $this->belongsToMany(JobCandidate::class,'candidate_interview','interview_id','candidate_id');
 	}
+	
+	public function jobQuestions()
+	{
+		return $this->hasMany(JobQuestion::class, 'interview_id');
+	}
+	public function jobPost()
+	{
+		return $this->belongsTo(JobPost::class, 'job_id');
+	}
 
 	public function setInterviewDateAttribute($value)
 	{
