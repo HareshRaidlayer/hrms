@@ -588,7 +588,8 @@
 
                     <?php if(Auth::user()->role_users_id===2): ?>
                         <li class="has-dropdown <?php echo e((request()->is('staff/compensation/details') || request()->is('staff/allowances/details') || request()->is('staff/commission/details')
-                        || request()->is('staff/loan/details') || request()->is('staff/statutory-deduction/details') ) ? 'active' : ''); ?>">
+                        || request()->is('staff/loan/details') || request()->is('staff/statutory-deduction/details') 
+                        || request()->is('staff/other-pyment/details') || request()->is('staff/overtime-pyment/details') ) ? 'active' : ''); ?>">
                                 <a href="#compensation" aria-expanded="false" data-toggle="collapse"> <i
                                             class="dripicons-archive"></i><span><?php echo e(__('Compensation')); ?></span>
                                 </a>
@@ -608,6 +609,12 @@
                                 </li>
                                 <li id="statutoryDeduction"><a
                                             href="<?php echo e(route('employees.statutoryDeduction')); ?>"><?php echo e(__('Statutory Deduction')); ?></a>
+                                </li>
+                                <li id="other_payments"><a
+                                            href="<?php echo e(route('employees.otherPymentDetails')); ?>"><?php echo e(__('Other Payments')); ?></a>
+                                </li>
+                                <li id="overtime_payments"><a
+                                            href="<?php echo e(route('employees.overtimePymentDetails')); ?>"><?php echo e(__('Overtime')); ?></a>
                                 </li>
                             </ul>
                         </li>

@@ -19,10 +19,12 @@ use App\Models\office_shift;
 use App\Models\RelationType;
 use Illuminate\Http\Request;
 use App\Models\DeductionType;
+use App\Models\SalaryOvertime;
 use App\Models\SalaryAllowance;
 use App\Models\SalaryDeduction;
 use App\Models\SalaryCommission;
 use App\Models\QualificationSkill;
+use App\Models\SalaryOtherPayment;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Maatwebsite\Excel\Facades\Excel;
@@ -881,5 +883,37 @@ class EmployeeController extends Controller
                 ->make(true);
         }
         return view('employee.compensation.statutoryDeduction', compact('employee'));
+    }
+    public function otherPymentDetails()
+    {
+        $user = auth()->user();
+
+        $employee = Employee::find($user->id);
+        if (request()->ajax())
+        {
+            return datatables()->of(SalaryOtherPayment::where('employee_id', $employee->id)->orderByRaw('DATE_FORMAT(first_date, "%y-%m")')->get())
+                ->setRowId(function ($other_payment)
+                {
+                    return $other_payment->id;
+                })
+                ->make(true);
+        }
+        return view('employee.compensation.other_payment', compact('employee'));
+    }
+    public function overtimePymentDetails(){
+    $user = auth()->user();
+
+        $employee = Employee::find($user->id);
+        if (request()->ajax())
+			{
+				return datatables()->of(SalaryOvertime::where('employee_id', $employee->id)->orderByRaw('DATE_FORMAT(first_date, "%y-%m")')->get())
+					->setRowId(function ($overtime)
+					{
+						return $overtime->id;
+					})
+					->make(true);
+			}
+
+        return view('employee.compensation.overtime_payment', compact('employee'));
     }
 }
