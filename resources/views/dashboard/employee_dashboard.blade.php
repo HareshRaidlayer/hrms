@@ -1,4 +1,3 @@
-
 @extends('layout.main')
 @section('page_style')
     <style>
@@ -40,7 +39,7 @@
 
                         <div class="timeline-step">
                             <div class="left text-right">
-                                <div class="step-title"> <a href="{{route('job.manageInterview')}}" >Interview</a> </div>
+                                <div class="step-title"> <a href="{{ route('job.manageInterview') }}">Interview</a> </div>
                             </div>
                             <div class="middle">
                                 <div class="dot"></div>
@@ -66,14 +65,14 @@
                                 <div class="dot"></div>
                             </div>
                             <div class="right" data-toggle="modal" data-target="#jobOfferModal" style="cursor: pointer;">
-  <div class="text-right-side">Web App (Employee - posted as reading job offer)</div>
-</div>
+                                <div class="text-right-side">Web App (Employee - posted as reading job offer)</div>
+                            </div>
 
                         </div>
 
                         <div class="timeline-step">
                             <div class="left text-right">
-                                <div class="step-title"><a href="{{route('onboarding.index')}}" >Onboarding</a></div>
+                                <div class="step-title"><a href="{{ route('onboarding.index') }}">Onboarding</a></div>
                             </div>
                             <div class="middle">
                                 <div class="dot"></div>
@@ -462,7 +461,7 @@
                         <div class="card-header">
                             <h4>{{ __('Assigned Tasks') }} ({{ $assigned_tasks_count }})</h4>
                         </div>
-                        <div class="card-body list pt-0">
+                        <div class="card-body list pt-0" id="task-list">
                             <table class="table">
                                 <tbody>
                                     @foreach ($assigned_tasks as $task)
@@ -793,53 +792,52 @@
                 </div>
             </div>
         </div>
-<div class="modal fade" id="jobOfferModal" tabindex="-1" role="dialog" aria-labelledby="jobOfferLabel"
-  aria-hidden="true">
-  <div class="modal-dialog" role="document" style="width: 30%;">
-    <div class="modal-content" style="background-color: #fff9b1;">
-      <div class="modal-body">
-        <p>
-        <p class=" mb-1"><strong>{{ __('Name') }}</strong>:
-          {{ $employee->full_name }} <span class=" font-weight-normal">
-            ({{ $user->username }})</span></p>
+        <div class="modal fade" id="jobOfferModal" tabindex="-1" role="dialog" aria-labelledby="jobOfferLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document" style="width: 30%;">
+                <div class="modal-content" style="background-color: #fff9b1;">
+                    <div class="modal-body">
+                        <p>
+                        <p class=" mb-1"><strong>{{ __('Name') }}</strong>:
+                            {{ $employee->full_name }} <span class=" font-weight-normal">
+                                ({{ $user->username }})</span></p>
 
 
-        <strong>Age</strong><br>
-        <p class=" mb-1"><strong>{{ __('Position') }}</strong>:
-          {{ $employee->designation->designation_name ?? '' }}</p>
-        <p class=" mb-1"><strong>{{ __('Department') }}</strong>:
-          {{ $employee->department->department_name ?? '' }}</p>
-        </p>
+                        <strong>Age</strong> {{ \Carbon\Carbon::parse($employee->date_of_birth)->age }}<br>
+                        <p class=" mb-1"><strong>{{ __('Position') }}</strong>:
+                            {{ $employee->designation->designation_name ?? '' }}</p>
+                        <p class=" mb-1"><strong>{{ __('Department') }}</strong>:
+                            {{ $employee->department->department_name ?? '' }}</p>
+                        </p>
 
-        <p><strong>Specific Tasks</strong> - Copied from the Job Details</p>
-        <p><strong>Additional Tasks</strong></p>
+                        <p id="view-task-list"><a href="#task-list"><strong>Specific Tasks</strong> - ({{ $assigned_projects_count }})</a></p>
+                        
+                        <h5><a href="{{route('employees.compensation')}}">Compensation Package</a></h5>
+                        <p><strong>First 90 Days</strong></p>
+                        <ul>
+                            <li> <a href="{{route('employees.compensation')}}">Basic </a></li>
+                            {{-- <li>Bonuses</li> --}}
+                        </ul>
 
-        <h5>Compensation Package</h5>
-        <p><strong>First 90 Days</strong></p>
-        <ul>
-          <li>Basic</li>
-          <li>Bonuses</li>
-        </ul>
+                        <p><strong>Regular</strong></p>
+                        <ul>
+                            <li> <a href="{{route('employees.compensation')}}">Basic </a></li>
+                            <li> <a href="{{route('employees.allowances')}}">Mandatory Benefits </a></li>
+                            <li> <a href="{{ route('profile') . '#Leave' }}">Leave Credits </a></li>
+                        </ul> 
 
-        <p><strong>Regular</strong></p>
-        <ul>
-          <li>Basic</li>
-          <li>Mandatory Benefits</li>
-          <li>Leave Credits</li>
-        </ul>
+                        <p><strong>One Year</strong></p>
+                        <ul>
+                            <li><a href="{{ route('profile') . '#Leave' }}">Additional Leave Credits ( {{ $totalRemaining}})</a></li>
+                        </ul>
 
-        <p><strong>One Year</strong></p>
-        <ul>
-          <li>Additional Leave Credits</li>
-        </ul>
-
-        <!-- <div class="text-center mt-4">
-          <button type="button" class="btn btn-success" data-dismiss="modal">Accept</button>
-        </div> -->
-      </div>
-    </div>
-  </div>
-</div>
+                        <!-- <div class="text-center mt-4">
+              <button type="button" class="btn btn-success" data-dismiss="modal">Accept</button>
+            </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </section>
 @endsection
@@ -917,6 +915,10 @@
             $('#holiday').on('click', function() {
                 $('#holidayModal').modal('show');
             });
+             $('#view-task-list').on('click', function() {
+                $('#jobOfferModal').modal('hide');
+            });
+            
 
             $('#leave_request').on('click', function() {
                 $('#leaveModal').modal('show');

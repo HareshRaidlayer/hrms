@@ -2,53 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Announcement;
-use App\Models\Attendance;
-use App\Models\Award;
-use App\Models\GeneralSetting;
-use App\Models\Client;
-use App\Models\company;
-use App\Models\DocumentType;
-use App\Models\Employee;
-use App\Models\EmployeeProject;
-use App\Models\EmployeeTask;
-use App\Models\EmployeeTicket;
-use App\Models\EmployeeWorkExperience;
-use App\Models\FinanceDeposit;
-use App\Models\FinanceExpense;
-use App\Models\Holiday;
-use App\Http\traits\AutoUpdateTrait;
-use App\Http\traits\ENVFilePutContent;
-use App\Http\traits\CalendarableModelTrait;
-use App\Http\traits\ShiftTimingOnDay;
-use App\Models\Invoice;
-use App\Models\IpSetting;
-use App\Models\leave;
-use App\Models\LeaveType;
-use App\Models\Payslip;
-use App\Models\Project;
-use App\Models\QualificationEducationLevel;
-use App\Models\QualificationLanguage;
-use App\Models\QualificationSkill;
-use App\Models\RelationType;
-use App\Models\SalaryBasic;
-use App\Models\status;
-use App\Models\SupportTicket;
-use App\Models\Trainer;
-use App\Models\TrainingType;
-use App\Models\TravelType;
-use App\Models\User;
-use Carbon\Carbon;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 use Throwable;
 use ZipArchive;
-use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use App\Models\User;
+use App\Models\Award;
+use App\Models\leave;
+use App\Models\Client;
+use App\Models\status;
+use App\Models\company;
+use App\Models\Holiday;
+use App\Models\Invoice;
+use App\Models\Payslip;
+use App\Models\Project;
+use App\Models\Trainer;
+use App\Models\Employee;
+use App\Models\IpSetting;
+use App\Models\LeaveType;
+use App\Models\Attendance;
+use App\Models\TravelType;
+use App\Models\SalaryBasic;
+use App\Models\Announcement;
+use App\Models\DocumentType;
+use App\Models\EmployeeTask;
 use App\Models\JobInterview;
+use App\Models\RelationType;
+use App\Models\TrainingType;
+use Illuminate\Http\Request;
+use App\Models\SupportTicket;
+use App\Models\EmployeeTicket;
+use App\Models\FinanceDeposit;
+use App\Models\FinanceExpense;
+use App\Models\GeneralSetting;
+use App\Models\EmployeeProject;
+use App\Models\QualificationSkill;
+use Illuminate\Support\Facades\DB;
+use App\Http\traits\AutoUpdateTrait;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use App\Http\traits\ShiftTimingOnDay;
+use App\Models\QualificationLanguage;
+use App\Http\traits\ENVFilePutContent;
+use App\Models\EmployeeWorkExperience;
+use App\Models\EmployeeLeaveTypeDetail;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Validator;
+use App\Http\traits\CalendarableModelTrait;
+use App\Models\QualificationEducationLevel;
 
 
 class DashboardController extends Controller {
@@ -552,6 +553,16 @@ class DashboardController extends Controller {
             }
         }
 
+		$employeeLeaveTypeDetail = EmployeeLeaveTypeDetail::where('employee_id',$employee->id)->first();
+            $leaveTypeUnserialize = [];
+			$totalRemaining = 0;
+		if ($employeeLeaveTypeDetail) {
+			$leaveTypeUnserialize = unserialize($employeeLeaveTypeDetail->leave_type_detail);
+		}
+		foreach ($leaveTypeUnserialize as $key => $itemArr) {
+                $totalRemaining += $itemArr['remaining_allocated_day'];
+            }
+
 
 		$assigned_tasks = EmployeeTask::with(['assignedTasks' => function ($query) use ($employee)
 		{
@@ -612,7 +623,7 @@ class DashboardController extends Controller {
 			'shift_in', 'shift_out', 'shift_name', 'announcements','interviews',
 			'employee_award_count', 'holidays', 'leave_types', 'travel_types',
 			'assigned_projects', 'assigned_projects_count',
-			'assigned_tasks', 'assigned_tasks_count', 'assigned_tickets', 'assigned_tickets_count','ipCheck'));
+			'assigned_tasks', 'assigned_tasks_count', 'assigned_tickets', 'assigned_tickets_count','ipCheck','totalRemaining'));
 	}
 
 
