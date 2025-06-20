@@ -255,20 +255,30 @@ Route::group(['middleware' => ['XSS','checkDataTable']], function () {
         Route::get('/allowances/details', [EmployeeController::class, 'allowances'])->name('employees.allowances');
         Route::get('/loan/details', [EmployeeController::class, 'loanDetails'])->name('employees.lonDetails');
         Route::get('/statutory-deduction/details', [EmployeeController::class, 'statutoryDeduction'])->name('employees.statutoryDeduction');
+        Route::get('/other-pyment/details', [EmployeeController::class, 'otherPymentDetails'])->name('employees.otherPymentDetails');
+        Route::get('/overtime-pyment/details', [EmployeeController::class, 'overtimePymentDetails'])->name('employees.overtimePymentDetails');
 
         Route::prefix('onboarding')->group(function () {
-        // Route::get('onboarding', [JobQuestionController::class, 'onboarding'])->name('onboarding');
-        Route::get('candidate/document/download/{id}', [OnboardingController::class, 'download'])->name('candidate_document.download');
-        Route::post('documents/{candidate}/store', [OnboardingController::class, 'store'])->name('onboarding.documents.store');
-        Route::get('/candidate-document/edit/{id}', [OnboardingController::class, 'editid'])->name('onboarding.documents.edit');
-        Route::get('/documents', [OnboardingController::class, 'index'])->name('onboarding.index');
-        Route::get('/candidate/document/{id}', [OnboardingController::class, 'dashboard'])->name('onboarding.dashboard');
-        Route::post('/candidate/documents/update', [OnboardingController::class, 'update'])->name('onboarding.documents.update');
-        Route::delete('/candidate/document/delete/{id}', [OnboardingController::class, 'destroy'])->name('onboarding.documents.destroy');
+            // Route::get('onboarding', [JobQuestionController::class, 'onboarding'])->name('onboarding');
+            Route::get('candidate/document/download/{id}', [OnboardingController::class, 'download'])->name('candidate_document.download');
+            Route::post('documents/{candidate}/store', [OnboardingController::class, 'store'])->name('onboarding.documents.store');
+            Route::get('/candidate-document/edit/{id}', [OnboardingController::class, 'editid'])->name('onboarding.documents.edit');
+            Route::get('/documents', [OnboardingController::class, 'index'])->name('onboarding.index');
+            Route::get('/candidate/document/{id}', [OnboardingController::class, 'dashboard'])->name('onboarding.dashboard');
+            Route::post('/candidate/documents/update', [OnboardingController::class, 'update'])->name('onboarding.documents.update');
+            Route::delete('/candidate/document/delete/{id}', [OnboardingController::class, 'destroy'])->name('onboarding.documents.destroy');
 
-        Route::get('/candidate/{id}', [OnboardingController::class, 'onboardCandadite'])->name('onboarding.onboardCandadite');
+            Route::get('/candidate/{id}', [OnboardingController::class, 'onboardCandadite'])->name('onboarding.onboardCandadite');
 
-    });
+        });
+
+        Route::prefix('candidate')->group(function () { 
+        Route::get('/qualification/{id}', [OnboardingController::class, 'qualification'])->name('candidate_qualification.index');
+        Route::post('qualification/{candidate}/store', [OnboardingController::class, 'qualificationStore'])->name('candidate.qualificationStore');
+        Route::get('qualifications/{id}/edit', [OnboardingController::class, 'qualificationEdit'])->name('candidate.qualificationEdit');
+        Route::post('qualifications/update', [OnboardingController::class, 'qualificationUpdate'])->name('qualifications.qualificationUpdate');
+        Route::get('qualifications/{id}/delete', [OnboardingController::class, 'qualificationDelete'])->name('candidate.qualificationDelete');
+        });
 
         Route::prefix('immigrations')->group(function () {
             Route::get('/', [EmployeeImmigrationController::class, 'index'])->name('immigrations.index');

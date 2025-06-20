@@ -9,7 +9,11 @@ use App\Models\JobInterview;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Models\CandidatesDucument;
+use App\Models\QualificationSkill;
+use App\Models\QualificationLanguage;
+use App\Models\CandidateQualificaiton;
 use Illuminate\Support\Facades\Validator;
+use App\Models\QualificationEducationLevel;
 
 class OnboardingController extends Controller
 {
@@ -265,4 +269,137 @@ class OnboardingController extends Controller
 
         return view('onboarding.onbord_tab');
     }
+    public function qualification($id){
+
+        $candidate =JobCandidate::find($id);
+        $education_levels = QualificationEducationLevel::select('id', 'name')->get();
+			$language_skills = QualificationLanguage::select('id', 'name')->get();
+			$general_skills = QualificationSkill::select('id', 'name')->get();
+
+        if (request()->ajax())
+			{
+				return datatables()->of(CandidateQualificaiton::with('EducationLevel')->where('candidate_id', $id)->get())
+					->setRowId(function ($qualification)
+					{
+						return $qualification->id;
+					})
+					->addColumn('education_level', function ($row)
+					{
+						return $row->EducationLevel->name;
+					})
+					->addColumn('action', function ($data) use ($id)
+					{
+							$button = '<button type="button" name="edit" id="' . $data->id . '" class="qualification_edit btn btn-primary btn-sm"><i class="dripicons-pencil"></i></button>';
+							$button .= '&nbsp;&nbsp;';
+							$button .= '<button type="button" name="delete" id="' . $data->id . '" class="qualification_delete btn btn-danger btn-sm"><i class="dripicons-trash"></i></button>';
+
+							return $button;
+						
+					})
+					->rawColumns(['action'])
+					->make(true);
+			}
+
+        return view('onboarding.candidate_qualificaiton',compact('candidate','education_levels','language_skills','general_skills'));
+    }
+
+
+
+
+
+    
+
+	public function qualificationStore(Request $request,$candidate)
+	{
+			$validator = Validator::make($request->only( 'institution_name','education_level_id','from_date','to_date',
+				'description','language_skill_id','general_skill_id'),
+				[
+					'institution_name' => 'required',
+					'education_level_id' => 'required',
+					'from_date' =>'required',
+					'to_date' =>'required',
+				]
+
+			);
+
+
+			if ($validator->fails())
+			{
+				return response()->json(['errors' => $validator->errors()->all()]);
+			}
+
+
+			$data = [];
+
+			$data['institution_name'] =  $request->institution_name;
+			$data['candidate_id'] = $candidate;
+			$data['education_level_id'] = $request->education_level_id;
+			$data['language_skill_id'] = $request->language_skill_id;
+			$data ['general_skill_id'] = $request->general_skill_id;
+			$data ['from_year'] = $request->from_date;
+			$data ['to_year'] = $request->to_date;
+			$data ['description'] = $request->description;
+
+			CandidateQualificaiton::create($data);
+
+			return response()->json(['success' => __('Data Added successfully.')]);
+
+	}
+
+	public function qualificationEdit($id)
+	{
+		if(request()->ajax())
+		{
+			$data = CandidateQualificaiton::findOrFail($id);
+
+			return response()->json(['data' => $data]);
+		}
+	}
+
+	public function qualificationUpdate(Request $request)
+	{
+		$id = $request->hidden_id;
+		
+			$validator = Validator::make($request->only( 'institution_name','education_level_id','from_date','to_date',
+				'description','language_skill_id','general_skill_id'),
+				[
+					'institution_name' => 'required',
+					'education_level_id' => 'required',
+					'from_date' =>'required',
+					'to_date' =>'required',
+				]
+
+			);
+
+
+			if ($validator->fails())
+			{
+				return response()->json(['errors' => $validator->errors()->all()]);
+			}
+
+
+			$data = [];
+
+			$data['institution_name'] =  $request->institution_name;
+			$data['education_level_id'] = $request->education_level_id;
+			$data['language_skill_id'] = $request->language_skill_id;
+			$data ['general_skill_id'] = $request->general_skill_id;
+			$data ['from_year'] = $request->from_date;
+			$data ['to_year'] = $request->to_date;
+			$data ['description'] = $request->description;
+
+
+			CandidateQualificaiton::find($id)->update($data);
+
+			return response()->json(['success' => __('Data is successfully updated')]);
+		
+	}
+
+	public function qualificationDelete($id)
+	{
+        CandidateQualificaiton::whereId($id)->delete();
+        return response()->json(['success' => __('Data is successfully deleted')]);
+		
+	}
+    
 }

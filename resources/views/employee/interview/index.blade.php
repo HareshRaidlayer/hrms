@@ -148,6 +148,7 @@
                                                                 Interview
                                                                 </a>
                                                             <a class="dropdown-item" href="#">Generate Job Offer</a>
+                                                            <a class="dropdown-item" href="{{route('candidate_qualification.index',$candidate->id)}}">Qualification</a>
                                                             <a class="dropdown-item" href="{{route('onboarding.dashboard',$candidate->id)}}">Upload Requirements</a>
                                                             <a class="dropdown-item" href="{{ route('onboarding.onboardCandadite',$candidate->id) }}">Onboarding</a>
                                                             
