@@ -65,9 +65,10 @@
                             <div class="middle">
                                 <div class="dot"></div>
                             </div>
-                            <div class="right">
-                                <div class="text-right-side">Web App (Employee - posted as reading job offer)</div>
-                            </div>
+                            <div class="right" data-toggle="modal" data-target="#jobOfferModal" style="cursor: pointer;">
+  <div class="text-right-side">Web App (Employee - posted as reading job offer)</div>
+</div>
+
                         </div>
 
                         <div class="timeline-step">
@@ -792,8 +793,53 @@
                 </div>
             </div>
         </div>
+<div class="modal fade" id="jobOfferModal" tabindex="-1" role="dialog" aria-labelledby="jobOfferLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document" style="width: 30%;">
+    <div class="modal-content" style="background-color: #fff9b1;">
+      <div class="modal-body">
+        <p>
+        <p class=" mb-1"><strong>{{ __('Name') }}</strong>:
+          {{ $employee->full_name }} <span class=" font-weight-normal">
+            ({{ $user->username }})</span></p>
 
 
+        <strong>Age</strong><br>
+        <p class=" mb-1"><strong>{{ __('Position') }}</strong>:
+          {{ $employee->designation->designation_name ?? '' }}</p>
+        <p class=" mb-1"><strong>{{ __('Department') }}</strong>:
+          {{ $employee->department->department_name ?? '' }}</p>
+        </p>
+
+        <p><strong>Specific Tasks</strong> - Copied from the Job Details</p>
+        <p><strong>Additional Tasks</strong></p>
+
+        <h5>Compensation Package</h5>
+        <p><strong>First 90 Days</strong></p>
+        <ul>
+          <li>Basic</li>
+          <li>Bonuses</li>
+        </ul>
+
+        <p><strong>Regular</strong></p>
+        <ul>
+          <li>Basic</li>
+          <li>Mandatory Benefits</li>
+          <li>Leave Credits</li>
+        </ul>
+
+        <p><strong>One Year</strong></p>
+        <ul>
+          <li>Additional Leave Credits</li>
+        </ul>
+
+        <!-- <div class="text-center mt-4">
+          <button type="button" class="btn btn-success" data-dismiss="modal">Accept</button>
+        </div> -->
+      </div>
+    </div>
+  </div>
+</div>
 
     </section>
 @endsection
